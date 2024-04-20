@@ -36,8 +36,8 @@ function UploadFile() {
 
   return (
     <div>
-      <h1>Upload a PDF file</h1>
-      <input type="file" onChange={handleFileChange} />
+      <h1>Upload a .pptx file</h1>
+      <input type="file" accept=".pptx" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={loading}>
         {loading ? 'Uploading...' : 'Upload File'}
       </button>
