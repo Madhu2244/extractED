@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <ChakraProvider>
-        {/* <FileUploadModal /> */}
+        <FileUploadModal />
         <GeneratedNotes/>
       </ChakraProvider>
     </>
