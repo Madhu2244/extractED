@@ -1,23 +1,15 @@
 import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react'
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Button
-} from '@chakra-ui/react'
 import FileUploadModal from './FileUploadModal';
+import GeneratedNotes from './GeneratedNotes';
+
 
 function App() {
   return (
     <>
       <ChakraProvider>
-        <FileUploadModal />
+        {/* <FileUploadModal /> */}
+        <GeneratedNotes/>
       </ChakraProvider>
     </>
   );
