@@ -104,7 +104,7 @@ def generate_notes_from_summaries(summaries):
         content = content_response.text
         content = clean_content(content)
         
-        notes[header] = [content]
+        notes[header] = content
     
     return notes
 
@@ -138,11 +138,11 @@ def upload_file():
             notes = generate_notes_from_summaries(summaries)
 
             return jsonify({
-                # 'message': 'File uploaded and processed',
-                # 'text': sentences,
-                # 'graph_data': graph,
-                # 'headers': headers,
-                # 'summaries': summaries,
+                'message': 'File uploaded and processed',
+                'text': sentences,
+                'graph_data': graph,
+                'headers': headers,
+                'summaries': summaries,
                 'notes': notes,
                 }), 200
 
