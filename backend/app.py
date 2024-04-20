@@ -1,26 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pptx import Presentation
+from preprocessing.text_extraction import extract_text_from_presentation
+from preprocessing.sentence_processing import extract_sentences_from_text
+from preprocessing.graph_creation import create_graph
+from summarization.header_generation import create_headers
+from summarization.content_summarization import summarize_clusters
+from notes_generation.notes_creation import generate_notes_from_summaries
 import os
+
+
+
+# $env:API_KEY = 'AIzaSyDtdYPjd5cL3kE6daHpbbkgPS20OknKJDw'
 
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)
-
-
-# Function to extract text
-def extract_text(ppt_file):
-    prs = Presentation(ppt_file)
-    texts = []
-
-    for slide in prs.slides:
-        slide_text = []
-        for shape in slide.shapes:
-            if hasattr(shape, "text"):
-                slide_text.append(shape.text)
-        texts.append(' '.join(slide_text))
-
-    return texts
 
 # Route to handle file upload and processing
 @app.route('/upload', methods=['POST'])
@@ -34,9 +28,21 @@ def upload_file():
             save_path = os.path.join(uploads_dir, file.filename)
             file.save(save_path)
 
-            text = extract_text(save_path)
+            text = extract_text_from_presentation(save_path)
+            sentences = extract_sentences_from_text(text)
+            graph = create_graph(sentences)
+            headers = create_headers(graph)
+            summaries = summarize_clusters(headers)
+            notes = generate_notes_from_summaries(summaries)
 
-            return jsonify({'message': 'File uploaded and processed', 'text': text }), 200
+            return jsonify({
+                'message': 'File uploaded and processed',
+                'text': sentences,
+                'graph_data': graph,
+                'headers': headers,
+                'summaries': summaries,
+                'notes': notes,
+                }), 200
 
     return jsonify({'error': 'No file part'}), 400
 
