@@ -4,8 +4,8 @@
 Instructions to run:
 
 1. cd into the directory you want to clone this project in
-2. run `git clone https://github.com/Madhu2244/Extractor.git`
-3. run `cd ExtractED`
+2. run `git clone https://github.com/Madhu2244/extractED.git`
+3. run `cd extractED`
 4. run `cd backend`
 5. run `pip install -r requirements.txt`
 6. run `python app.py`
