@@ -8,6 +8,12 @@ import re
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import google.generativeai as genai
+from langchain import OpenAI
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.docstore.document import Document
+from langchain.chains.summarize import load_summarize_chain
+
+# $env:API_KEY = 'AIzaSyDtdYPjd5cL3kE6daHpbbkgPS20OknKJDw'
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -44,7 +50,7 @@ def create_graph(sentences):
     similarity_matrix = cosine_similarity(embed)
 
     for i in range(len(sentences)):
-        for j in range(len(sentences)):
+        for j in range(i + 1, len(sentences)):
             if i != j and similarity_matrix[i][j] > 0.4:
                 graph[sentences[i]].append(sentences[j])
                 graph[sentences[j]].append(sentences[i])
@@ -68,6 +74,25 @@ def create_headers(graph):
             headers[header_text] = similar_sentences
     return headers
 
+# Function to summarize clusters of sentences associated with headers
+def summarize_clusters(headers):
+    llm = OpenAI(temperature=0, max_tokens=600)  
+    text_splitter = CharacterTextSplitter()  
+    summaries = {}  
+
+    for header, sentences in headers.items():
+        input_text = " ".join(sentences)
+        
+        texts = text_splitter.split_text(input_text)
+        docs = [Document(page_content=t) for t in texts]  
+        
+        chain = load_summarize_chain(llm, chain_type="map_reduce")
+        
+        summary_output = chain.invoke(docs)
+        clean_summary = summary_output['output_text'].replace('\n', ' ').strip()
+        summaries[header] = clean_summary
+
+    return summaries
 
 # Route to handle file upload and processing
 @app.route('/upload', methods=['POST'])
@@ -85,12 +110,14 @@ def upload_file():
             sentences = extract_sentences_from_text(text)
             graph = create_graph(sentences)
             headers = create_headers(graph)
+            summaries = summarize_clusters(headers)
 
             return jsonify({
                 'message': 'File uploaded and processed',
                 'text': sentences,
                 'graph_data': graph,
                 'headers': headers,
+                'summaries': summaries,
                 }), 200
 
     return jsonify({'error': 'No file part'}), 400
