@@ -21,8 +21,11 @@ function UploadFile() {
           method: 'POST',
           body: formData,
         });
-        const data = await response.text();
-        setResponseMessage('Upload successful: ' + data); // Update response message
+        const data = await response.json();
+        // console.log(data)
+        const formattedData = JSON.stringify(data, null, 2);
+        console.log(formattedData)
+        setResponseMessage('Upload successful: \n' + formattedData); // Update response message
       } catch (error) {
         console.error('Error uploading file:', error);
         setResponseMessage('Upload failed!'); // Update response message
@@ -42,7 +45,7 @@ function UploadFile() {
         {loading ? 'Uploading...' : 'Upload File'}
       </button>
       {loading && <p>Please wait, uploading...</p>}
-      {responseMessage && <p>{responseMessage}</p>} {/* Display the response message */}
+      {responseMessage && <pre>{responseMessage}</pre>} {/* Display the response message */}
     </div>
   );
 }

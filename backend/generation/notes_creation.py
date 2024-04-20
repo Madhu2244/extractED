@@ -10,7 +10,7 @@ def generate_notes_from_summaries(summaries):
         prompt = f"List the important information: {summary}"
         content_response = gemini_model.generate_content(prompt)
         
-        if content_response.text:
+        if content_response:
             content = content_response.text
             content = clean_content(content)
         

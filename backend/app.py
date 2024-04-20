@@ -5,8 +5,10 @@ from preprocessing.sentence_processing import extract_sentences_from_text
 from preprocessing.graph_creation import create_graph
 from summarization.header_generation import create_headers
 from summarization.content_summarization import summarize_clusters
-from notes_generation.notes_creation import generate_notes_from_summaries
+from generation.notes_creation import generate_notes_from_summaries
+from generation.quiz_generation import generate_quiz
 import os
+import json
 
 
 
@@ -34,14 +36,18 @@ def upload_file():
             headers = create_headers(graph)
             summaries = summarize_clusters(headers)
             notes = generate_notes_from_summaries(summaries)
+            quiz_json = json.loads(generate_quiz(headers, notes, 2))
+            quiz_pretty = json.dumps(quiz_json, indent=4)
+            quiz_object = json.loads(quiz_pretty)
 
             return jsonify({
-                'message': 'File uploaded and processed',
-                'text': sentences,
-                'graph_data': graph,
+                # 'message': 'File uploaded and processed',
+                # 'text': sentences,
+                # 'graph_data': graph,
                 'headers': headers,
-                'summaries': summaries,
-                'notes': notes,
+                # 'summaries': summaries,
+                # 'notes': notes,
+                'quiz': quiz_object,
                 }), 200
 
     return jsonify({'error': 'No file part'}), 400
