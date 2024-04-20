@@ -8,7 +8,7 @@ import re
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import google.generativeai as genai
-from langchain import OpenAI
+from langchain_openai import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain.chains.summarize import load_summarize_chain
@@ -94,6 +94,30 @@ def summarize_clusters(headers):
 
     return summaries
 
+def generate_notes_from_summaries(summaries):
+    notes = {}
+    
+    for header, summary in summaries.items():
+        prompt = f"List the important information: {summary}"
+        content_response = gemini_model.generate_content(prompt)
+        
+        content = content_response.text
+        content = clean_content(content)
+        
+        notes[header] = [content]
+    
+    return notes
+
+def clean_content(content):
+    content = re.sub(r'\*+', '', content)  
+    content = re.sub(r'\n+', '\n', content)  
+    content = re.sub(r'\s+', ' ', content) 
+    content = content.replace('-', '')
+    bullet_points = content.strip().split('\n')
+    bullet_points = [bp.strip() for bp in bullet_points if bp.strip()]
+    return bullet_points
+
+
 # Route to handle file upload and processing
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -111,13 +135,15 @@ def upload_file():
             graph = create_graph(sentences)
             headers = create_headers(graph)
             summaries = summarize_clusters(headers)
+            notes = generate_notes_from_summaries(summaries)
 
             return jsonify({
-                'message': 'File uploaded and processed',
-                'text': sentences,
-                'graph_data': graph,
-                'headers': headers,
-                'summaries': summaries,
+                # 'message': 'File uploaded and processed',
+                # 'text': sentences,
+                # 'graph_data': graph,
+                # 'headers': headers,
+                # 'summaries': summaries,
+                'notes': notes,
                 }), 200
 
     return jsonify({'error': 'No file part'}), 400
