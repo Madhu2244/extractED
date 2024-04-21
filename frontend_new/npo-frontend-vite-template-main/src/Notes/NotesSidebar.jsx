@@ -22,7 +22,7 @@ function NotesSidebar() {
     return (
         <>
             <Button onClick={onOpen}>Open</Button>
-            <Drawer variant="permanent">
+            <Drawer isOpen={isOpen} onClose={onClose}>
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerHeader>Notes Menu</DrawerHeader>

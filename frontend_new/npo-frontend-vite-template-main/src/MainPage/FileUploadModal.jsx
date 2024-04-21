@@ -37,7 +37,7 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           body: formData,
         });
         const data = await response.text();
-        setResponseMessage('Upload successful: ' + data);
+        setResponseMessage('Upload successful: ' + JSON.stringify(data, null, 2));
         console.log('Response:', data); // Log the server response
       } catch (error) {
         console.error('Error uploading file:', error);
