@@ -30,7 +30,10 @@ CORS(app)
 # Chatbot start
 # Set up OpenAI API key
 
-loader = TextLoader("C:\\Users\\madhu\\Documents\\UCI\\lahacks_final\\backend\\output.txt")
+current_directory = os.getcwd()  # Get the current working directory
+output_file_path = os.path.join(current_directory, "output.txt")  # Combine with output.txt filename
+
+loader = TextLoader(output_file_path)
 documents = loader.load()
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 texts = text_splitter.split_documents(documents)
