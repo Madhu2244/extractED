@@ -29,7 +29,6 @@ CORS(app)
 
 # Chatbot start
 # Set up OpenAI API key
-os.environ["OPENAI_API_KEY"] = "sk-proj-Et9iD7WMHhwSMNcidyWFT3BlbkFJsk8eAO8FDy7iIJunFp1l"
 
 loader = TextLoader("C:\\Users\\madhu\\Documents\\UCI\\lahacks_final\\backend\\output.txt")
 documents = loader.load()

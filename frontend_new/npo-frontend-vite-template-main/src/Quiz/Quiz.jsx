@@ -104,21 +104,23 @@ function Quiz({ responseMessage, setStep }) {
                 <h1 style={{ color: 'red' }}>Incorrect: the answer is: {quizItem['correct answer']}</h1>
               </div>
             )}
-            {quizItem.options.map((option, optionIndex) => (
-              <Box key={optionIndex} mt={2} display="flex" alignItems="center">
-                  <Button
-                    onClick={() => handleAnswerClick(index, optionIndex)}
-                    borderRadius="full" // Circular shape
-                    size="sm" // Small button size
-                    colorScheme={selectedAnswers[index] === optionIndex ? 'blue' : 'gray'}
-                    mr={4} // Right margin for spacing between button and text
-                  >
-                    {optionIndex + 1} {/* Displaying the option number */}
-                  </Button>
-                  <Text display="inline">{option}</Text> {/* Display the option text */}
-                  <br />
-                </Box>
-              ))}
+            {quizItem.options.map((option, optionIndex) => {
+              const letter = String.fromCharCode(65 + optionIndex);
+              return (
+                <Box key={optionIndex} mt={2} display="flex" alignItems="center">
+                    <Button
+                      onClick={() => handleAnswerClick(index, optionIndex)}
+                      borderRadius="full" // Circular shape
+                      size="sm" // Small button size
+                      colorScheme={selectedAnswers[index] === optionIndex ? 'blue' : 'gray'}
+                      mr={4} // Right margin for spacing between button and text
+                    >
+                      {letter} {/* Displaying the option number */}
+                    </Button>
+                    <Text display="inline">{option}</Text> {/* Display the option text */}
+                    <br />
+                  </Box>
+              )})}
             </ul>
             <br />
           </div>
