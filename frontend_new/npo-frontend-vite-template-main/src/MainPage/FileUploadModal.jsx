@@ -61,27 +61,34 @@ function FileUploadModal({ setResponseMessage, setStep }) {
     <>
       <Flex justifyContent="center" width="100%">
         <Flex width="70%" justifyContent="space-between">
-          <Button colorScheme='purple' width="25%" mr={4} onClick={onOpen}>Import Slides</Button>
+        <Button colorScheme='purple' width="25%" mr={4} onClick={onOpen}>
+  Import Slides <span style={{ marginLeft: '5px' }}><IoMdCloudUpload /></span>
+</Button>
           <Input value={value} onChange={handleChange} placeholder='Search for your notes' size='md' width="75%" />
         </Flex>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Upload Lecture Slides in PPTX Format</ModalHeader>
+          <ModalHeader>Upload Lecture Slides, Video Recordings, or Other Class Resources</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* File input within ModalBody */}
-            <input type="file" accept=".pptx" onChange={handleFileChange} />
+            <input type="file" onChange={handleFileChange} />
             {loading && <p>Please wait, uploading...</p>}
+            <Button onClick={handleFileChange} marginTop="5px">Add Additional Files</Button>
           </ModalBody>
 
           <ModalFooter>
+<<<<<<< Updated upstream
             <Button onClick={onClose} style={{ marginRight: '10px' }}>Cancel</Button>
+=======
+            <Button onClick={onClose} marginRight="5px">Cancel</Button>
+>>>>>>> Stashed changes
             <Button colorScheme='purple' mr={3} onClick={handleUpload} disabled={loading}>
-              {loading ? 'Uploading...' : 'Upload File'}
-              <IoMdCloudUpload />
-            </Button>
+  {loading ? 'Uploading...' : 'Upload File'}
+  <span style={{ marginLeft: '5px' }}><IoMdCloudUpload /></span>
+</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
