@@ -1,13 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import {
-  Box, Flex, Button, Image, Tag, Icon, Spacer
+  Box, Flex, Button, Tag, Spacer
 } from '@chakra-ui/react';
-import placeholderImage from './placeholder-article.png';
-import NotesTitleEditable from './NotesTitleEditable';
-import { MdSettings } from "react-icons/md"; // Using MdSettings icon
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import test from '../TestData/Test';
+import Chatbot from './Chatbot.jsx';
 
 function NotesSidebar({ setResponseMessage, responseMessage, setStep }) {
 
@@ -33,9 +32,9 @@ function NotesSidebar({ setResponseMessage, responseMessage, setStep }) {
 
 
   return (
-    <Flex height="100vh" direction="column"> {/* Changed to vertical layout */}
+    <Flex height="100vh" direction="column" width={"100%"}> {/* Changed to vertical layout */}
       <Box
-        w="275px" /* Fixed width */
+        w="400px" /* Fixed width */
         bg="gray.200" /* Background color */
         p="4" /* Padding */
         flex="1" /* Takes up remaining space */
@@ -43,18 +42,18 @@ function NotesSidebar({ setResponseMessage, responseMessage, setStep }) {
         borderLeft="1px" /* Visual separation */
         borderColor="gray.300"
       >
-        {/* Content section */}
-        {/* <Image src={placeholderImage} alt="Placeholder image" /> */}
-        <h1> Chat Bot </h1>
-
         <div>
           <Tag variant="solid" colorScheme="purple" my="4">
-            <Flex align="center" style={{ marginRight: '40px' }}>
-              {responseMessage['subject tag']}
+            <Flex align="center" style={{ width: '100vh', marginRight: '40px' }}>
+              Subject: {responseMessage['subject tag']}
               {/* <Icon as={MdSettings} ml="2" /> */}
             </Flex>
           </Tag>
         </div>
+        {/* Content section */}
+        {/* <Image src={placeholderImage} alt="Placeholder image" /> */}
+        <Chatbot />
+
         {/* <NotesTitleEditable /> */}
         <Spacer /> {/* Pushes footer down */}
       </Box>

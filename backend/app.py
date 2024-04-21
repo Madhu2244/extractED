@@ -13,12 +13,57 @@ import json
 from test_agent import simulate_handle_generate_quiz
 from test_agent import *
 
+from langchain_community.document_loaders import TextLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain.chains import ConversationalRetrievalChain
+from langchain_openai import OpenAI
+from langchain.prompts.prompt import PromptTemplate
+from langchain.chains import ChatVectorDBChain
+from langchain.memory import ConversationBufferMemory
+
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)
 
+# Chatbot start
+# Set up OpenAI API key
+os.environ["OPENAI_API_KEY"] = "sk-proj-Et9iD7WMHhwSMNcidyWFT3BlbkFJsk8eAO8FDy7iIJunFp1l"
+
+loader = TextLoader("C:\\Users\\madhu\\Documents\\UCI\\lahacks_final\\backend\\output.txt")
+documents = loader.load()
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+texts = text_splitter.split_documents(documents)
+
+# Create embeddings
+embeddings = OpenAIEmbeddings()
+
+# Create the vector store
+db = FAISS.from_documents(texts, embeddings)
+
+# Initialize the memory object
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# Initialize the chatbot
+qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0), db.as_retriever(), memory=memory)
+
+# Chatbot end
 
 grader = GraderAgent(name="TestGraderAgent", seed="test_grader_agent_seed")
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    if request.is_json:
+        data = request.get_json()
+        data = dict(data)
+        chat = data['chat']
+
+        result = qa.invoke({"question": chat})
+        response = result["answer"]
+
+        return jsonify({'message': response, 'test': 'test'}), 200
+    return jsonify({'error': 'Request must be JSON'}), 400
 
 @app.route('/submit', methods=['POST'])
 def submit_quiz():
