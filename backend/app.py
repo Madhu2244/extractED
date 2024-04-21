@@ -7,6 +7,7 @@ from summarization.header_generation import create_headers
 from summarization.content_summarization import summarize_clusters
 from generation.notes_creation import generate_notes_from_summaries
 from generation.quiz_generation import generate_quiz
+from generation.tagging import get_subject_tag, get_notes_title
 import os
 import json
 
@@ -45,6 +46,8 @@ def upload_file():
             quiz_json = json.loads(generate_quiz(headers, notes, 2))
             quiz_pretty = json.dumps(quiz_json, indent=4)
             quiz_object = json.loads(quiz_pretty)
+            subject_tag = get_subject_tag(headers, summaries, sentences, notes)
+            notes_title = get_notes_title(headers, summaries, sentences, notes)
 
             return jsonify({
                 'message': 'File uploaded and processed',
@@ -54,6 +57,8 @@ def upload_file():
                 'summaries': summaries,
                 'notes': notes,
                 'quiz': quiz_object,
+                'subject tag': subject_tag,
+                'notes_title': notes_title,
                 }), 200
 
     return jsonify({'error': 'No file part'}), 400
