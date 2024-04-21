@@ -16,13 +16,15 @@ function Quiz({ responseMessage }) {
 
   const submitQuiz = async () => {
     // Prepare the payload by adding selected answers to the quiz questions
+    responseMessage.quiz.map((question, index) => ({
+      ...question,
+      selectedAnswer: selectedAnswers[index] !== undefined
+        ? question.options[selectedAnswers[index]]
+        : null
+    }))
+
     const payload = {
-      quiz: responseMessage.quiz.map((question, index) => ({
-        ...question,
-        selectedAnswer: selectedAnswers[index] !== undefined
-          ? question.options[selectedAnswers[index]]
-          : null
-      }))
+      quiz: responseMessage
     };
   
     console.log(payload); // Check what you are sending

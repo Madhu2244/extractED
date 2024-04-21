@@ -18,8 +18,9 @@ CORS(app)
 def submit_quiz():
     if request.is_json:
         data = request.get_json()  # Get JSON data
-        data = list(data['quiz'])  # Print the data to see what is received
-        print(data[0]['correct answer'])
+        data = dict(data)
+        print(data['quiz']['quiz'])
+        print(data['quiz']['summaries'])
         return jsonify({'message': 'You did amazing!'}), 200
     return jsonify({'error': 'Request must be JSON'}), 400
 
