@@ -18,7 +18,7 @@ const MainPage = ({ setResponseMessage, setStep }) => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Good Evening, Joey!</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Good Morning, Joey!</h1>
       </div>
 
       <Stack direction={['column']} spacing='10vh'>

@@ -12,6 +12,7 @@ import {
   Button,
   Input,
   Flex,
+  Spinner
 } from '@chakra-ui/react';
 import { IoMdCloudUpload } from "react-icons/io";
 
@@ -75,7 +76,7 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           <ModalBody>
             {/* File input within ModalBody */}
             <input type="file" onChange={handleFileChange} />
-            {loading && <p>Please wait, uploading...</p>}
+            {loading && <Spinner />}
             <Button onClick={handleFileChange} marginTop="5px">Add Additional Files</Button>
           </ModalBody>
 

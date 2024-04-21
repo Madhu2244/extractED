@@ -71,21 +71,25 @@ function Chatbot() {
         ))}
         {isLoading && <Spinner />}
       </VStack>
-      <Box padding={2} bg="white" borderTop="1px solid" borderColor="gray.200">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          onKeyPress={event => {
-            if (event.key === 'Enter') {
-              handleSend();
-            }
-          }}
-        />
-        <Button onClick={handleSend} colorScheme="purple" mt={2}>
-          Send
-        </Button>
-      </Box>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: '75%' }}>
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+            onKeyPress={event => {
+              if (event.key === 'Enter') {
+                handleSend();
+              }
+            }}
+          />
+        </div>
+        <div style={{ flex: '25%', marginLeft: '8px' }}>
+          <Button onClick={handleSend} colorScheme="purple">
+            Send
+          </Button>
+        </div>
+      </div>
     </Box>
   );
   

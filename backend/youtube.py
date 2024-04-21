@@ -22,13 +22,3 @@ def search_youtube_link(api_key, search_query):
     except HttpError as e:
         print("An error occurred:", e)
         return None
-
-if __name__ == "__main__":
-    api_key = input("Enter your YouTube API key: ")
-    search_text = input("Enter your YouTube search: ")
-    youtube_link = search_youtube_link(api_key, search_text)
-    
-    if youtube_link:
-        print("YouTube link found:", youtube_link)
-    else:
-        print("No YouTube link found for the search query.")

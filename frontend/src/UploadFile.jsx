@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import {
+  Spinner
+} from '@chakra-ui/react';
 
 function UploadFile() {
   const [file, setFile] = useState(null);
@@ -44,7 +47,7 @@ function UploadFile() {
       <button onClick={handleUpload} disabled={loading}>
         {loading ? 'Uploading...' : 'Upload File'}
       </button>
-      {loading && <p>Please wait, uploading...</p>}
+      {loading && <Spinner />}
       {responseMessage && <pre>{responseMessage}</pre>} {/* Display the response message */}
     </div>
   );

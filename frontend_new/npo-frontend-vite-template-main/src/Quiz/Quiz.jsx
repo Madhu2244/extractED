@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Button, Box, Text } from '@chakra-ui/react';
@@ -7,6 +8,8 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Spinner,
+  Flex,
 } from '@chakra-ui/react'
 
 function Quiz({ responseMessage, setStep }) {
@@ -14,6 +17,8 @@ function Quiz({ responseMessage, setStep }) {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [topicsToReview, setTopicsToReview] = useState({})
   const [showRightAnswers, setShowRightAnswers] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [youtubeLinks, setYoutubeLinks] = useState([]);
 
   // Handler for clicking an answer option
   const handleAnswerClick = (questionIndex, optionIndex) => {
@@ -53,6 +58,7 @@ function Quiz({ responseMessage, setStep }) {
   }
 
   const submitQuiz = async () => {
+    setIsLoading(true)
     // Prepare the payload by adding selected answers to the quiz questions
     responseMessage.quiz.map((question, index) => ({
       ...question,
@@ -84,7 +90,31 @@ function Quiz({ responseMessage, setStep }) {
     } catch (error) {
       console.error('Error uploading quiz:', error);
     }
+    setIsLoading(false)
   }
+
+  const findYoutubeLinks = async () => {
+    console.log(topicsToReview);
+    for (const topic in topicsToReview) {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/youtube', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ search: topic }),
+        });
+        
+        const data = await response.json();
+        if (data.message) {
+          setYoutubeLinks(prevLinks => [...prevLinks, data.message]);
+        }
+      } catch (error) {
+        console.error('Error fetching YouTube links:', error);
+      }
+    }
+  }
+  
 
   // Render the quiz based on the responseMessage
   const outputQuiz = (responseMessage) => {
@@ -129,6 +159,16 @@ function Quiz({ responseMessage, setStep }) {
     );
   };
 
+  function extractVideoID(url) {
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+      return match[2];
+    } else {
+      return null;
+    }
+  }
+
   return (
     <div>
       <Box
@@ -145,7 +185,7 @@ function Quiz({ responseMessage, setStep }) {
         <br />
         {outputQuiz(responseMessage)}
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button onClick={submitQuiz}>
+          <Button onClick={() => {submitQuiz(); findYoutubeLinks();}}>
             Submit Quiz
           </Button>
           <Button onClick={() => setStep(0)}>
@@ -154,7 +194,7 @@ function Quiz({ responseMessage, setStep }) {
         </div>
         < br />
         < br />
-        
+        {isLoading && <Spinner />}
 
         {topicsToReview && Object.keys(topicsToReview).length > 0 && (
           <Alert status='error'>
@@ -168,8 +208,30 @@ function Quiz({ responseMessage, setStep }) {
               </div>
             </AlertDescription>
           </Alert>
-          
         )}
+
+        <Flex direction="column" align="center" maxW="lg" m="auto" p={5}>
+          {youtubeLinks.length > 0 && (
+            <Box>
+              <Text fontSize="lg" fontWeight="bold" mb={4}>
+                Here are some YouTube videos that can assist with your learnings:
+              </Text>
+              {youtubeLinks.map((link, index) => {
+                const videoID = extractVideoID(link);
+                return (
+                  <Box key={index} mb={4} p={3} bg="gray.100" borderRadius="md" width="full">
+                    {videoID && (
+                      <a href={link} target="_blank" rel="noopener noreferrer">
+                        <img src={`https://img.youtube.com/vi/${videoID}/0.jpg`} alt="Youtube Thumbnail" style={{ width: '100%', height: 'auto', display: 'block' }}/>
+                        <Text display="block" mt={2}>{link}</Text>
+                      </a>
+                    )}
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+        </Flex>
       </Box>
     </div>
   );

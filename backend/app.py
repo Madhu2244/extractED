@@ -8,6 +8,7 @@ from summarization.content_summarization import summarize_clusters
 from generation.notes_creation import generate_notes_from_summaries
 from generation.quiz_generation import generate_quiz
 from generation.tagging import get_subject_tag, get_notes_title
+import youtube as youtube
 import os
 import json
 from test_agent import simulate_handle_generate_quiz
@@ -23,12 +24,12 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.chains import ChatVectorDBChain
 from langchain.memory import ConversationBufferMemory
 
+
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)
 
 # Chatbot start
-# Set up OpenAI API key
 
 current_directory = os.getcwd()  # Get the current working directory
 output_file_path = os.path.join(current_directory, "output.txt")  # Combine with output.txt filename
@@ -64,6 +65,16 @@ def chat():
         result = qa.invoke({"question": chat})
         response = result["answer"]
 
+        return jsonify({'message': response, 'test': 'test'}), 200
+    return jsonify({'error': 'Request must be JSON'}), 400
+
+@app.route('/youtube', methods=['POST'])
+def submit_youtube():
+    if request.is_json:
+        data = request.get_json()
+        data = dict(data)
+        search = data['search']
+        response = youtube.search_youtube_link('', search)
         return jsonify({'message': response, 'test': 'test'}), 200
     return jsonify({'error': 'Request must be JSON'}), 400
 
