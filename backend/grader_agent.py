@@ -13,7 +13,7 @@ class QuizParams(Model):
     answers: List[str]
     responses: List[str]
     questions: List[str]
-    notes: Dict[str, str]
+    notes: Dict[str, List[str]]
 
 grader_proto = Protocol("Quiz Generator", version="0.1")
 
@@ -39,11 +39,21 @@ class GraderAgent(Agent):
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         embeddings = OpenAIEmbeddings()
         
+
+        # headers = list(notes.keys())
+        # notes_texts = [notes[header] for header in headers]
+
+        # notes_docs = []
+        # for header, note_text in zip(headers, notes_texts):
+        #     note_docs = text_splitter.create_documents([note_text], metadatas=[{"header": header}])
+        #     notes_docs.extend(note_docs)
+
         headers = list(notes.keys())
-        notes_texts = [notes[header] for header in headers]
+        notes_texts = [' '.join(notes[header]) for header in headers]  # Join the list of strings into a single string
 
         notes_docs = []
         for header, note_text in zip(headers, notes_texts):
+            # Assuming create_documents expects a string, not a list
             note_docs = text_splitter.create_documents([note_text], metadatas=[{"header": header}])
             notes_docs.extend(note_docs)
 

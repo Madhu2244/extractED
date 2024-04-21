@@ -1,0 +1,571 @@
+Informatics 43 Spring 2009 | News | Course Reference | Schedule | Course Project | Code Examples | About Alex
+
+Informatics 43 Spring 2009
+Final Exam Study Guide
+
+Introduction
+
+This study guide is a summary of the material covered in lecture since the Midterm. It should be noted that the Final Exam is cumulative. Though it will emphasize post-Midterm material somewhat over pre-Midterm material, all of the material covered in the course is fair game for the exam. Be sure to check out the Midterm Study Guide for a rundown of material covered before the Midterm.
+
+The best advice for studying is to focus your attention as much on the "Why?" as the "What?" It's my goal to write an exam that does not depend solely on your ability to memorize terms, definitions, and facts; instead, I'm much more interested in whether you understand why things are the way they are, and in your ability to combine concepts we've learned about in novel ways that we've yet to consider in lecture.
+
+I should point out that this study guide is not intended as a replacement for the lectures or your own notes. It's possible that something we discussed in class will have been left out of the study guide, but is still fair game for the exam. I'm not trying to cheat you on purpose, but the study guide is what it is: it's a guide.
+
+Enjoy.
+
+Assessing design quality
+
+(This is a topic that we covered just before the Midterm, but that I inadvertently left out of the Midterm Study Guide. I've added it here, since it remains fair game for the Final Exam.)
+
+One of the things that can be frustrating about software design is that it's difficult to assess whether your design is a good one. How much coupling is too much? How little cohesion is too little? How do I know whether concerns are being separated well enough?
+
+Unfortunately, there is no one metric or set of metrics that we can use to determine, in black and white, whether our design is "good enough." But there are some well-known techniques that allow us to quantitatively assess certain aspects of our designs. Most notably, a fair amount of work has been put into assessing complexity. If we can measure the complexity of our design, we know something about its quality. (Notably, we don't know other things, like whether it meets its requirements; but we can test for those other things separately.)
+
+Complexity measurements focus on choosing some attribute that contributes to the complexity of our design, then measuring something about that attribute. There are two kinds of attributes we can focus on:
+
+Intra-module attributes. Attributes of a single module.
+Inter-module attributes. Attributes of a collection of modules, taken together.
+Intra-module attributes
+
+There are at least two things we can measure about a module if we want to assess its complexity quantitatively:
+
+Size. Longer modules are harder to understand, harder to maintain, and likelier to have bugs. So measuring size tells us something about complexity.
+Structure. How we write something determines complexity, independent of its size. So we can measure aspects of a module's structure (e.g., loops, if statements, parameters, etc.).
+Measuring size
+
+The simplest way to measure size is to measure lines of code. Often, this is reported as thousands of lines of code (or KLOC, where K stands for "kilo-"), because a ballpark estimate to the nearest thousand, in a large project, is about as good as a perfect number. Lines of code is a simple enough metric, though it can be terribly misleading:
+
+Should we count lines containing comments?
+What about layout? Should the following be counted as one line? Two? Four?
+    while (!done) { done = checkIfFinished(); }
+Layout issues aside, what about the fact that one line of code can be more or less complex?
+    a = b;
+    for (int i = 0; i < a.size(); i++)
+What about the fact that some languages have a more compact syntax than others? You tend to have to say more in Java to accomplish the same goal than you do in Ruby or Python, for example.
+A more layout-neutral measurement of code size might be to count tokens instead of lines. Tokens are the individual words and symbols that have meaning in a programming language. For example, in this block of Java code:
+
+    public static void main(String[] args)
+    {
+        System.out.println("Hello world!");
+    }
+there are a total of 21 tokens: public, static, void, main, (, String, [, ], args, ), {, System, ., out, ., println, (, "Hello world!", ), ;, and }. Notably absent from the list of tokens are whitespace (spaces, blank lines, tabs) and comments, making this a metric that has nothing to do with how the program is laid out. Unfortunately, despite its deficiencies, lines of code is a metric that seems to resonate better with programmers — we know what 100 lines of code "feels like," but have less of a sense of what 1,000 tokens feels like.
+
+Measuring structure
+
+Measuring the size of a module ignores the fact that the way we write our code is at least as important as how much code we write. Other complexity metrics focus on the structure of our code.
+
+One such measurement is called cyclomatic complexity. The cyclomatic complexity measurement begins with the building a control flow graph, which depicts the possible flows of control from one line of code to another. For example, consider the following block of code.
+
+    public int nonsenseAlgorithm(int[] a)
+    {
+1       for (int i = 0; i < a.length; i++)
+        {
+2           if (a[i] < 0)
+            {
+3               a[i] = a[i] * -2;
+            }
+4           else if (a[i] == 0)
+            {
+5               a[i] = Integer.MIN_VALUE;
+            }
+            else
+            {
+6               a[i] = a[i] * 2;
+            }
+        }
+        
+7       return -1;
+    }
+Each line on which there is either a decision to be made or an action to be taken has been numbered, starting from 1. Note that the line containing the method's signature, the curly braces, and the line containing only an else are not numbered, since there is neither a decision to be made nor an action to be taken on any of these lines.
+
+We can now draw our control flow graph by depicting each numbered line as a numbered circle called a node and each way we can get from one line to another as an arrow called an edge connecting two nodes. In the example above, our control flow graph would look like this:
+
+Control Flow Graph Example
+
+The cyclomatic complexity measurement is calculated by counting nodes, edges, and connected subgraphs. Connected subgraphs are a subset of the nodes that are completely "connected" (i.e., if you look at it, there are no nodes that can't be reached when starting at line 1 and following edges). A single method will always be one single, connected subgraph; the control flow graph for an entire class with five methods would contain five, connected subgraphs, one for each method.
+
+Given the number of nodes n, edges e, and connected subgraphs p, the cyclomatic complexity is:
+
+CyclomaticComplexity = e − n + p + 1
+In the example above, we have seven nodes, nine edges, and one connected subgraph, so our cyclomatic complexity is:
+
+CyclomaticComplexity = 9 − 7 + 1 + 1
+CyclomaticComplexity = 4
+Larger numbers indicate a higher complexity than smaller ones. For example, a larger number indicates that it will be more difficult to come up with a complete set of test cases to cover all possible paths through the control flow graph.
+
+Inter-module attributes
+
+We didn't spend time on this topic in lecture, though this topic is covered in some detail in your textbook.
+
+Unit Testing and Test-Driven Development
+
+What is unit testing?
+
+In preparation for your implementation of the course project, we discussed unit testing. Unit testing is generally done performed by developers during the implementation of each module. The goal of unit testing is to focus a microscope of individual parts of the program (e.g., individual classes or even individual methods), evaluating how well they work outside of the context of the rest of the program.
+
+No matter how much unit testing we perform, we can't be certain that our entire system is correct even if all of our unit tests pass, since unit testing ignores the issues that arise when different parts of the program are integrated together. But it does provide a way to verify that the individual parts themselves work — a condition without which the entire system certainly won't — in a context in which understanding the cause of a bug is much simpler than when testing the entire system.
+
+Another benefit of unit testing is that it positively affects design quality. In order to ensure that a module can be tested in isolation, you will tend to have lower coupling, better separation of concerns, clearer naming, and so on. If unit tests are being written as the program is being developed, you will tend not to stray too far with a poor design, since writing unit tests will force you to clean it up sooner rather than later; the sooner you clean up the design of a module, the easier it is, since fewer other modules depend on it.
+
+Unit testing is generally done in an automated fashion, with unit tests implemented as code. The major benefit here is repeatability; you can now run the tests as often as you'd like. By keeping the tests over the long run, we have a way to detect if the behavior of individual modules has changed in a way that causes these tests to fail later; if so, we can decide whether the change in behavior was expected (in which case the test is no longer valid) or not (in which case we've broken our code and should look into fixing it).
+
+When we implemented unit tests in this course, we wrote them in Java using a tool called JUnit. I will not ask you to implement JUnit-based tests on the Final Exam, though I may ask you to read and understand them. See the code example from lecture for more details.
+
+What is test-driven development?
+
+We talked in lecture about test-driven development (TDD), a process for developing programs and their designs simultaneously. It centers on the following iterative process, which is focused on allowing you to take short steps from stable ground to stable ground, so that you have a working program (with tests to prove that it works) every few minutes.
+
+Choose a feature to work on, generally something so simple that you can accomplish it in no more than a few minutes.
+Write a test that verifies that the feature will work when you're done with it. In a sense, you're experimenting with your design before you write the code that depends on it; if you don't like the way your design works during this experiment, you can change it at no cost, since you don't have any code that implements it yet.
+Compile the test and watch it fail (or succeed, sometimes!).
+If the test didn't compile, write the minimum amount of code to make the test compile. Note that "minimum" means that we sometimes write things that we know will be wrong a little bit farther down the line.
+Run the test and watch it fail (or succeed, sometimes!).
+If the test failed, write the minimum amount of code to make the test pass; again, we're willing to write code that we know will be wrong later, since our goal in any iteration is to make only the current test pass (while keeping all old tests passing, as well).
+Run the test again and (hopefully) watch it succeed.
+If the test failed again, go back to step 6; if it succeeded, you're on stable ground again!
+After each iteration, we also consider ways that we can improve our code by "refactoring" it. Refactoring improves the design of a program without changing what it does. When we see things that could be designed better (such as duplicated code that could be eliminated or names that could be improved), we attack the problem right away, knowing that our tests can be run any time we want to know whether our code is still working as it did. If we mess up while refactoring, our tests will tell us so.
+
+Note that while unit tests are a central task in TDD, you don't have to use TDD to make good use of unit tests.
+
+Serialization
+
+One of the requirements that you faced in the implementation of the course project was saving the program's data into a file and then loading it back up again, the goal being that the program could be stopped and restarted without any data being lost. This is a fairly common problem, so there is well-known terminology that describes the solution to it.
+
+We say that serialization is the process of taking a set of objects and turning them into a single sequence of bytes or text. Deserialization, then, is the process of taking that same sequence of bytes or text and turning it into a set of copies of the original objects you started with. At first, this technique sounds a little strange, but it's actually very useful. Note that a file consists of a sequence of bytes. When your program sends or receives data across a network, it's a sequence of bytes being sent or received. So serialization and deserialization can be used to save objects into a file and load them back up again; it can be used to send objects across a network and then reconstruct them on the other end; and so on.
+
+The details of Java's built-in implementation of serialization are beyond the scope of the Final Exam, but I would like you to understand what serialization is and what problem it solves.
+
+Test cases and test coverage metrics
+
+In general, there is no way to completely test a chunk of code (i.e., call every method with every possible set of inputs and verify the correct ouptut), simply because the number of possibilities is vast, even for relatively simple methods. So, instead, we are forced to choose a representative set of test cases, with the goal that they cover everything that's "interesting" about the chunk of code being tested. A test case is at least three things: a set of inputs, an action to be taken, and the expected output.
+
+We say that test coverage is an indication of how thoroughly a set of tests verify the correct behavior of our code. We talked in lecture about test coverage metrics, which are quantitative ways to assess whether your set of test cases is sufficient. In particular, we talked about ways that, given a control flow graph, we could determine whether we had sufficiently tested the code that it represented.
+
+Since we can't achieve complete testing, we talked about three different goals one could try to attain — three different test coverage metrics — each requiring more thorough test coverage than the last.
+
+Node coverage. Every node in the control flow graph is reached during the execution of at least one of the tests.
+This means, essentially, that every statement in the program is reached at least once.
+Not achieving node coverage means that there are some parts of our program that we never tested at all.
+On the other hand, achieving node coverage is often not sufficient. In a method with multiple, separate if statements, node coverage might be achieved with only a couple of tests, but different combinations of these if statements haven't been tested.
+Edge coverage. Every edge in the control flow graph is followed during the execution of at least one of the tests.
+This means that every "branch" (i.e., every way to get from one line to another) in the program is followed at least once.
+This is more thorough than node coverage, since we're not only considering each line, but different ways of reaching each line.
+We're likelier to see problems with our logic this way, especially in the presence of many if statements and/or loops.
+Path coverage. Every path through the control flow graph is followed during the execution of at least one of the tests.
+This means we're considering every possible sequence of lines that we could follow from the beginning to the end of the method.
+This is more thorough than edge coverage, since it considers all possible ways to pass through each edge.
+The number of tests required to achieve path coverage explodes exponentially as the number of conditionals increases, since we have to consider every possible way of passing through the conditionals.
+One interesting question is how we should deal with loops, especially those that might potentially run many times (or even forever). A typical way to deal with this is to require a few different numbers of iterations (e.g., zero (if possible), one, an average number, and a maximum number).
+Tools can automate these kinds of test coverage metrics. Java, for example, allows for "instrumentation" (i.e., code that is triggered by the inner workings of the Java Virtual Machine). We could write a tool that builds a control flow graph for each method, then run all of our unit tests while watching which nodes are edges are reached; from this, the tool could report node, edge, and/or path coverage to us, as both a percentage (e.g., "80% of the nodes were reached") and a detailed listing (especially of those nodes, edges, and paths that were missed).
+
+Quality assurance and testing
+
+In many organizations, there is a department or group called Quality Assurance (QA), which is tasked with, as the name states, assuring the quality of the system. As we've seen, "quality" is a broad term, encompassing not only things like correctness (i.e., the system meets the stated requirements), but also whether the requirements are the right ones in the first place. While it is safe to say that issues of quality often crosscut the entire organization, QA teams are the ones who spend the vast majority of their time focused on assessing it.
+
+It's generally wise for the QA group to answer to different people in the organization than a software development group, since their goals often oppose one another and there should be a management-level champion of each set of goals. For example, hen asked "Should we ship the system as-is?," software development will often want to say "Yes" even when the answer should be "No," if there is pressure on them to deliver by a certain date. It's important for QA to be able to weigh in with a reasoned opinion about why the answer should be "No."
+
+Testing
+
+One of the primary roles of a QA group is to plan and perform testing. We spent a fair amount of time in lecture talking about testing from several different angles.
+
+Testing is the process of determining whether software meets its specification. It is done by planning and executing a set of test cases. Our goals are simple:
+
+Detecting the presence of problems.
+Identifying the cause of those problems.
+There is some standard terminology used to describe the problems found during testing:
+
+Error. A mistake made by a person when working on a software system
+Fault. A problem with the software that arises because of an error
+Failure. Behavior of the system that does not match specifications, due to a fault.
+Note that not all errors lead to faults and that not all faults lead to failures. It's the failures we're most concerned about finding; when we find them, we also have to diagnose it, which means finding and correcting the fault and (ideally) deciding the cause of the error, so that we might be able to introduce measures to avoid it in the future.
+
+Testing is best done throughout a project, with different kinds of testing (focused at different levels of depth) done at different times.
+
+Unit testing, which is commonly done by developers during implementation of individual modules
+Integration testing, which focuses on testing how modules interact with one another
+Acceptance testing or User acceptance testing, in which users determine whether the software meets their own needs
+White box vs. black box testing
+
+We can distinguish between two kinds of testing, each focused differently:
+
+White box testing, or structural testing, in which we choose test cases based on the structure of the code. Unit testing is a form of white box testing. We can also do white box testing by devising tests of our complete system, driven by code that we want to test.
+Black box testing, or specification-based testing, in which we test the system without regard for its source code, by experimenting with the behavior of the complete system. Test cases are generally selected based on the requirements specification.
+The tradeoff here is between the difficulty of needing to understand the source code and the difficulty of systematically choosing and automating specification-based tests. Because of the need to understand the source code, white box testing is often best done by developers, while black box testing is often best done by others, so that ingrained bias of the developers can be overcome.
+
+Equivalence partitioning and test matrices
+
+Whether you're focused on white box or black box testing, there still remains the problem of deciding on a set of test cases. Rather than just choosing test cases somewhat randomly, as we think of them, one way to focus our minds and be sure we're covering a variety of interesting circumstances is to do equivalence partitioning, which proceeds according to the following steps:
+
+Identify a set of inputs (maybe all possible inputs, maybe just some)
+Identify a basis for subdividing the input
+Examples include the size of a collection, the order in which the collection's elements appear, conditions that may or may not be true (e.g., the user is already logged in)
+Divide the set of inputs into subdomains using this basis.
+Each of these subdomains forms an equivalence partition, meaning that each input in the subdomain is equivalent in some sense.
+Each possible input is a member of one or more of the subdomains; it's fine for them to overlap.
+Select representative test cases from each of the subdomains, along with test cases that belong to multiple subdomains whenever possible.
+If we follow this procedure for many interesting bases, we tend to have a very good set of test cases.
+
+Test oracles
+
+A test oracle is a mechanism for deciding whether a test case has failed or succeeded. Oracles are critical to testing, since we can't have meaningful test cases without expected output.
+
+How we create test oracles depends on the formality of our specifications. When our specifications are very formal (e.g., including, say, mathematical formulas), we can use these formulas to automatically generate our expected output; we say, then, that our test oracle is this set of formulas. For a variety of reasons, formal specifications are relatively rare — they're difficult to develop, harder to understand, expensive — so we're generally left to decide on our expected output manually. In such cases, the test oracle, ultimately, is us.
+
+Staged releases and user testing
+
+Despite a team's best efforts to test a product before delivering it to customers, it is generally not possible for the team to test every possible scenario that will arise once the customers begin using the system. Users may have needs that were never discovered during requirements elicitation, may respond to changing business requirements by trying to use the existing system differently, and are notorious for attempting things that no one ever imagined.
+
+It's been increasingly common for systems to have staged releases, where a sequence of pre-releases are distributed to users, with the confidence level in each pre-release being higher than the previous one and the number of users accepting it generally rising from one to the next. While there is not one standard nomenclature, the following sequence of pre-releases has evolved into a fairly common one:
+
+Alpha (or alpha testing), where users accept a version that is either incomplete or not fully tested. Users get to experiment with new featurues while accepting the fact that the software will not always perform as well as advertised.
+Beta (or beta testing), which generally coincides with the software being "feature complete" and having gone through substantial testing. Users have a higher level of confidence than they would in the alpha release, though there are still issues that will be discovered.
+Release Candidate (RC), which is used to denote a version that could be the final one. It is distributed to as many users as possible, with the understanding that the final version will be exactly the same unless important problems are found. RC releases are quite often very stable and almost indistinguishable from the final product.
+Version control systems
+
+When multiple people work together on a project — sometimes all in the same physical location (e.g., the same building), sometimes geographically distributed — there are coordination issues to be dealt with. Each person might have a copy of the project on his or her own machine, yet changes need to be shared so that each person can see the results of the others' work (at least when it's important). The effort required to manually synchronize the effort of many people increases much more than linearly as the number of people increases; before long, you have an unmanageable mess, unless you employ tools that help.
+
+Version control systems (sometimes called source control systems or source control management systems) are tools that help solve this kind of problem. There are many version control systems in popular use, but most share the same basic philosophy, even if they differ (sometimes substantially) in the details.
+
+When using a VCS, there is generally a central repository (in the sense of the "repository" architectural style we saw earlier this quarter), in which a complete, up-to-date copy of the system is stored. Usually, along with the most up-to-date version, is stored a database tracking all of the changes that have been made to the system, so that it becomes possible not only to say "Give me a complete copy of the system's source code," but also to say "Give me a complete copy of the system's source code as of April 1."
+
+The repository may be available on an intranet (i.e., within an organization) or the Internet, depending on the geographic reach of a project and whether the source code is proprietary. Users connect to the repository when they want to get the latest version of the code, or when they want to publish their changes. A few typical operations provided by a VCS are:
+
+Check out. This generally means that you are downloading a version of the system (or some part of the system) from the repository. On some systems, this also means that you're locking one or more files so that no one else can publish changes to them, though this is rare nowadays.
+Check in or Commit. This generally means that you are publishing changes into the repository so that others can see them. Changes are generally grouped, so that a set of related changes to different files become one changeset. Associated with each changeset is generally a comment (sometimes called a changelog) which explains what has changed and, more importantly, why.
+Compare. This allows you to see, often visually, how your version of some file differs from the version currently available in the repository, or to see how two different versions in the repository are different. This can be useful to help you to understand the history of changes that have been made to a particular file, or to understand the scope of the changes you're currently making.
+When multiple people are working, there can still be issues, even when there is a VCS involved. For example, consider the following scenario:
+
+Developer A checks out version 10 of file X.java and begins making changes to it. (Assume that checking it out means that it is not locked; anyone can still modify it.)
+Developer B checks out version 10 of file X.java and also begins making changes to it.
+Developer B finishes her changes, so she commits them. X.java is now at version 11.
+Developer A finishes his changes, so he wants to commit them. But the VCS reports that the version of X.java now in the repository doesn't match the version he checked out.
+At this point, Developer A will need to merge his changes with Developer B's. There are tools that help with this kind of task, but it can't be fully automated, since there exists the possibility that the two sets of changes are incompatible with each other; at this point, a conversation may need to take place before a decision can be made about what to do next.
+
+Issue tracking systems
+
+Issue tracking systems (or bug tracking systems) are repositories that track various issues related to the development and maintenance of a software system, along with a user interface that can be used to view, update, and search the repository of issues. As with version control systems, there are many issue tracking products available, which mostly share a common philosophy and differ in their details.
+
+Issues are generally classified in a number of ways, some examples of which follow:
+
+By kind: bug, feature request, design change
+By status: opened, assigned, closed (i.e., finished), duplicate of existing issue
+By component or module: which part of the system does the issue relate to?
+By version: which version of the system does the issue relate to?
+Issues are also generally assigned to individuals or groups, with that assignment changing over time. For example, a feature request might first be assigned to a business analyst, who decides whether the request fits within the scope of the system and negotiates requirements; from there, it might be assigned to a developer to implement, then to a tester to test, and finally back to the customer to do acceptance testing, before finally being closed.
+
+Integrating issue tracking with version control
+
+There is value in integrating an issue tracking system with a version control system. For example, if every issue was linked to changesets of source code changes that were made to address it — and, conversely, changesets were linked back to issues — we would have a fuller picture of the history of a system, which can be beneficial, especially on a large project where people are joining and leaving it over time.
+
+Informatics 43 Spring 2009 | News | Course Reference | Schedule | Course Project | Code Examples | About Alex
+
+Informatics 43 Spring 2009
+Midterm Study Guide
+
+Introduction
+
+This study guide is a summary of the material covered in lecture thusfar. The Midterm will be focused on both lecture material and assigned readings, but the focus of this guide is the material that we covered in lecture.
+
+The best advice for studying is to focus your attention as much on the "Why?" as the "What?" It's my goal to write an exam that does not depend solely on your ability to memorize terms, definitions, and facts; instead, I'm much more interested in whether you understand why things are the way they are, and in your ability to combine concepts we've learned about in novel ways that we've yet to consider in lecture.
+
+I should point out that this study guide is not intended as a replacement for the lectures or your own notes. It's possible that something we discussed in class will have been left out of the study guide, but is still fair game for the exam. I'm not trying to cheat you on purpose, but the study guide is what it is: it's a guide.
+
+Enjoy.
+
+Background
+
+This course is primarily about software engineering. That the term "software engineering" includes the word "engineering" immediately evokes a few ideas:
+
+Building things that solve real problems
+Working within real constraints (e.g., How many people do we have? How much time do we have? How much money do we have?)
+Evolving what we build over time, so that it solves new problems
+There are many similar definitions of software engineering; one of them is the following:
+
+Software engineering is the application of a systematic, disciplined, quantifiable approach to the development, operation, and maintenance of software.
+Some words stand out in that definition:
+
+Systematic: We're not just going about our process willy-nilly; we have a plan.
+Disciplined: We adhere to our plan and various "best practices" at all times.
+Quantifiable: There are aspects of our development process that we can measure, for the purposes of knowing how well we're doing, how we might improve, and whether our attempted improvements worked.
+Operation and Maintenance: Our work is not done when we ship the first version. We have to keep it running, addressing problems that come up, adding features to solve new problems, and so on.
+So when we move out of the realm of programming and into the realm of software engineering is when we scale the sizes of our projects up. It's about programming-in-the-large as opposed to programming-in-the-small. Programming-in-the-large includes some combination of: multiple people, multiple versions, multiple years, multiple related products.
+
+Basic activities in software engineering include:
+
+Determining the requirements of the system
+Organizing teams to build the system cooperatively
+Defining an overall architecture for the system
+Breaking the larger architecture into modules
+Implementing the individual modules
+Integrating the modules together
+Testing — throughout the process, not just at the end
+Writing documentation
+Configuration management
+Process
+
+Software is said to go through a lifecycle, in which various activities are done at various points in time. An idealized view of that lifecycle looks something like this:
+
+Idealized Software Lifecycle
+
+When embarking on a new software engineering project, we need to decide on a process. In general, a process is a strategy for organizing a project, which answers questions like this:
+
+In what order will the major tasks be done?
+Who will do the major tasks?
+What information will we exchange with each other as we work?
+There is not broad agreement in real-world software development about what process should be used. Virtually anywhere you work will have a process that is at least slightly different than processes you'd use anywhere else. This is partly because software is a relatively young discipline, and partly because different processes work better or worse depending on the situation (e.g., How many people do we have? How much time do we have? How well do our customers understand what needs to be built?).
+
+Processes generally fit into one of a couple of categories:
+
+Heavyweight or planning-driven processes, in which are careful to plan everything thoroughly before we do it.
+Lightweight or agile processes, in which we accept that things change often, so we spend less time planning and more time building, taking care to work in a way that allows us to change course when we discover that we need to.
+There is a spectrum of possible processes, with the most heavyweight on one end and the most lightweight on the other. We discussed the two extremes in lecture: the waterfall model and agile methods.
+
+The Waterfall Model
+
+The waterfall model is one well-known process model for engineering software. It breaks a project into phases, with each phase being one of the activities from the idealized view of the software lifecycle shown above.
+
+Each phase has an output, which is some combination of documentation and code. The output of one phase becomes the input to the next phase. These outputs are depicted in the diagram above:
+
+Requirements engineering → Requirements specification
+Design → Design specification
+Implementation → Code and program-level documentation
+Testing → Working code and accurate program-level documentation
+We can think of the design phase as, itself, being two separate sub-phases:
+
+Architectural design, which is focused on understanding the major modules and their interactions.
+Detailed design, which is focused on understanding the design of each module's internals (e.g., classes, methods, etc.).
+Once we've reached the maintenance and evolution phase, our focus is on keeping the system running and on finding new business problems that could be solved with modifications to the product. As we find new business problems, we can embark on a waterfall-style project in which we make these modifications.
+
+Verification and validation
+
+There are up to two additional tasks we need to perform in each step of the waterfall model: verification and validation (sometimes referred to as V&V). They sound similar, but they're not the same.
+
+Validation ensures that an attempt has been made to address or implement all of the requirements, so that each part of the program/design can be traced back to a particular requirement. This can be summed up by this question: "Are we building the right system?"
+Verification ensures that each of the requirements is implemented/designed correctly. This can be summed up by this question: "Are we building the system right?"
+We don't do both verification and validation at every step. For example, we don't do verification during requirements engineering, since we haven't designed or implemented anything yet.
+
+Testing and the V-model
+
+Testing is incorporated throughout a waterfall process — as it should be throughout any process. Test plans are part of the output of each phase, describing testing that will need to be done subsequently.
+
+Requirements engineering → Acceptance test plan
+Architectural design → Integration test plan
+Detailed design → Unit test plan
+One way to represent this relationship pictorially is often called the V-model, which depicts the waterfall model, along with related forms of testing that are planned early on and them performed later.
+
+Assessment of the waterfall model
+
+The waterfall model works beautifully in an ideal world where we always complete each phase correctly the first time. In reality, of course, we don't, so we need a way to backtrack to previous steps if necessary. The cost of that backtracking is higher the further back we have to go; for example, discovering an incorrect requirement during the testing phase requires us to revisit the requirements specification, the design documentation, and the program, along with the relevant test plans.
+
+Not surprisingly, the waterfall model has significant downsides in practice.
+
+It is assumed that we'll have perfect information available and that we'll perform perfectly at each step. The customers will know exactly what they want during the requirements engineering phase; the designers will anticipate all possible problems during the design phase; the implementers won't make any mistakes during the implementation phase; and the testers won't miss any problems during the testing phase.
+The later we discover a bug, the more expensive it is to fix, because we have more phases to revisit, more documentation to alter, and more people involved.
+Because of the need to backtrack, we'll often be working on multiple phases simultaneously, which makes it difficult to track progress; at any given time, we might not be done with any of the phases, even though we're working on all of them!
+Agile methods
+
+The waterfall model represents one extreme along a spectrum of software development processes, one where planning is king and we don't act until we know exactly where we're going. The opposite extreme is a set of processes called agile methods. Agile methods arise from the basic idea that change is inevitable, because:
+
+...mistakes are made throughout the process, which need to be cleaned up.
+...we don't always have perfect information available when we make decisions.
+...customers change their minds about what they need all the time.
+...customers' actual needs really do change (e.g., business processes are altered as the organization grows, applicable laws change).
+There are a number of variants of agile methods (e.g., Extreme Programming, Scrum), though they are generally all built according to the same set of principles. These principles are laid out in a document called the Manifesto for Agile Software Development (also known as the Agile Manifesto), the most important part of which reads as follows:
+
+We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value:
+Individuals and interactions over processes and tools
+Working software over comprehensive documentation
+Customer collaboration over contract negotiation
+Responding to change over following a plan
+That is, while there is value in the items on the right, we value the items on the left more.
+Agile methods have the following properties:
+
+They involve the customer throughout the process. A central tenet is that at least one customer representative is a full-fledged member of the team.
+They build complete, working subsets of the system — as often as every few weeks, in many cases. While the subsets are obviously incomplete, actual requirements are addressed correctly in each iteration.
+They focus on people and their interactions. Teams often work together in one large room to facilitate interactions. (Pair programming, in the sense that you've used in prior coursework, is often used.)
+They encourage looking out "code smells" and refactoring as soon as those smells develop. For example, duplicate code is eliminated when found, poor design choices are revisited as soon as it's clear they can be improved, and so on.
+They require testing throughout the process, with as much of that testing automated as possible.
+They don't generate as much documentation as heavyweight processes. Requirements are often written on index cards or some electronic equivalent; the code and tests, in general, are the documentation. If you want to know how something works, look at its code and, as importantly, its tests.
+Extreme Programming
+
+Extreme Programming (XP) is an example of an agile method. It is centered around a set of practices, some of which are:
+
+Small releases: Each version is not much different from the one that preceded it.
+The planning game: Determining the scope of the next release is done quickly. Rather than attempting to define everything we need to do, we just develop a small list of things we know we need to do.
+Simple design: Creativity and "cleverness" are frowned upon. Simpler and clearer is always considered better.
+Testing: Unit tests are written for all code that will make up the product.
+Refactoring: The design is changed when necessary, without affecting its behavior. This refactoring is automated whenever possible.
+Pair programming: All code that makes up the product is written in pairs, to reduce the probability of mistakes.
+Collective ownership: Anyone can change anything at any given time.
+40-hour week: Long weeks are the exception rather than the rule, since long weeks tend to lead to tired developers, which leads to mistakes that will be expensive to fix later.
+On-site customer: A customer representative is a full-fledged memnber of the team, available at all times.
+Software Quality
+
+We'd like to build quality software. But what is software quality? What should we be shooting for? Quality software...
+
+...meets its requirements (i.e., solves a business problem).
+...is user friendly, if it has a user interface at all.
+...is safe (i.e., it won't harm people or property).
+...runs on available hardware.
+...and so on.
+Measuring quality empirically is a difficult proposition; despite much work in this area over the last few decades, there are not measurements that can automate the process of deciding whether you have achieved quality.
+
+This doesn't mean that there aren't attributes that quality software tends to have. We should know how to recognize these attributes and use them as guidelines as we work.
+
+Correctness: Does the system meet its requirements and fulfill its objectives?
+Reliability: Does the system work at all times, or does it suffer from frequent bugs?
+Efficiency: Does the system require a reasonable amount of resources (i.e., time, memory, processing power, energy).
+Security: Does the system prevent unauthorized users from accessing information they shouldn't? Does it allow users to access information they should be able to see?
+Usability: Is it possible to learn how to use the system in a relatively short amount of time? Is it possible to perform tasks with a minimal amount of effort?
+Maintainability: Is it simple to locate and fix bugs in the system?
+Flexibility: Is it possible to modify the system easily, so that it can be adapted to new requirements?
+Testability: How difficult is it to test the system?
+Portability: Is it easy to move the system from one operating environment (i.e., hardware, operating system) to another?
+Reusability: Can parts of the system be reused in others?
+Interoperability: Can the system be integrated easily with other systems?
+Fault tolerance: How well does the system survive bugs and other problems?
+Safety: Does the software harm people, organizations, software, property, or the environment?
+Some of these factors trade off of others (e.g., sometimes efficiency harms maintainability, testability, and reusability).
+
+Requirements Engineering
+
+Requirements engineering is the process of analyzing a customer's problem, gaining an understanding of what a system could do to solve it, documenting that understanding, and checking the accuracy of that understanding. The product generated by requirements engineering is called a requirements specification; it details the current understanding of what the requirements for a system are.
+
+First of all, we should decide what is meant by a requirement. A requirement is "a condition or capability needed by a user to solve a problem or achieve an objective." It's something that the system should be able to do, or a constraint that the system must meet. Requirements are not necessary "musts" in a system; many requirements are, in practice, negotiable.
+
+The requirements engineering process is characterized at least partly by the need to address the concerns of many stakeholders. A stakeholder is anyone that is concerned with the system in some way:
+
+Developers who will build the system
+Testers who will ensure that the system meets its specifications
+End-users who will use the system after it's completed
+Managers of end-users who are responsible for their work
+Regulators who will ensure that the system meets any legal requirements
+Domain experts who give essential background information about the application domain
+Different stakeholders bring different kinds of requirements to the table. Those requirements can even conflict. For example, YouTube has a requirement that people be allowed to upload videos; ideally, they can upload any video they'd like. Copyright holders, however, view this requirement differently.
+
+Requirements engineering is comprised of four tasks:
+
+Requirements elicitation, during which we interact with users, customers, etc., to gain an understanding of what the requirements should be.
+Requirements specification, during which we write up what our understanding is.
+Requirements validation and verification, during which we and our customers agree upon that understanding.
+Requirements negotiation, during which we negotiate with the various stakeholders when there are requirements that conflict.
+Requirements elicitation
+
+A variety of techniques can be used to elicit requirements, including interviews, brainstorming, surveys/questionnaires, task analysis, ethnography, and prototyping. We choose these techniques based on who we need to interact with and what we need to know.
+
+Requirements specification
+
+A requirements specification is a document that describes the complete set of known requirements for a software engineering project. A good requirements specification has several attributes:
+
+Correct: Of course, first and foremost, we want the specification to reflect the actual needs of the users.
+Unambiguous: We should choose the clearest, least-ambiguous language possible. This is difficult when writing in a natural language like English — natural languages are inherently ambiguous. While there are formal languages that can be used to write requirements (e.g., Z), they are not in wide use.
+Complete: We should include every requirement discussed. Those that have been negotiated out might still be included in a "future directions" section.
+Consistent: There should not be requirements that conflict.
+Prioritized: The requirements should be prioritized so that it is clear which are more important than others. (E.g., "must have," "should have," "could have," "won't have.")
+Verifiable/testable: It should be possible to verify that a requirement can be met. We need to be specific.
+Modifiable: It should be easy to make changes to the specification. Some of the same techniques that make it easier to modify code apply here, as well: avoiding duplication of information, categorization and organization.
+Traceable: It should be possible to trace requirements forward and backward, so we should given them unique identifiers and use those identifiers elsewhere in our process.
+When writing a requirements specification, we want to focus on the "what" and not the "how." For example, we want to avoid implementation bias whenever possible. If we're building a web-based system, the underlying technology we choose (e.g., Java EE, PHP, .NET/ASP) is essentially irrelevant. Either way, a web site is a web site.
+
+Kinds of requirements
+
+We can categorize requirements in many ways. One way we did so in lecture was to separate them into functional and non-functional requirements.
+
+Functional requirements define the specific behavior of the system.
+Non-functional requirements define additional requirements other than what behavior the system supports (e.g., performance, security, cost, usability, etc.).
+Acceptance test plans
+
+Part of the requirements engineering process is to draw up an acceptance test plan, which details how a system will be tested to ensure that it is acceptable to the customer. Various scenarios will be described — in relatively open-ended terms, since we want to avoid implementation bias — the successful completion of which indicates that the system is ready to be delivered.
+
+Design
+
+Once requirements are agreed upon, it's time to begin working on a design for your system. Design is a many-faceted task, whose complexity rises substantially with the complexity of the system being developed. There is no one "right way" to design software, but there are many well-understood lessons and "best practices," recurring problems for which well-known solution patterns are known, and qualities that we know that good designs generally have and that bad designs generally lack.
+
+We can say that design comes in two flavors: architectural design, which focuses on the "big picture"; and module design, which focuses on details like classes, methods, and so on.
+
+There are a number of goals we're trying to achieve during the design phase:
+
+Decomposing the problem into modules
+Deciding on architectures for arranging these modules
+Developing a plan for how the team will work on these modules
+Estimating cost
+Determining what external systems we'll need to interface with and how we'll do it
+Visualizing the intangibles (using modeling, diagrams, etc.)
+Moduality
+
+Software is generally built by many people and generally has many versions over its lifetime; both of these facts pose issues that we'll need to solve. The solution to both is modularity; we should pefer to decompose our system into a collection of subsystems.
+
+Good modules have at least three characteristics:
+
+High cohesion. All internal parts are closely related.
+Low coupling. Modules rely on each other as little as possible.
+Information hiding. Modules hide design and implementation decisions. (By "hiding," I mean that other modules have no way of depending on these decisions. If they can't depend on these decisions, we can change our minds without breaking these other modules.)
+Qualities of a good design
+
+It's hard to define precisely what a "good" design is, but we do know that there are some desirable qualities that good designs have.
+
+Rigor. All requirements are addressed.
+Separation of concerns. Modules each solve a single problem. They can be written and tested independently.
+Anticipation of change. It should be possible to inject new functionality into a module with minimal impact.
+Incrementality. It should be possible to work on the software in a piecemeal fashion, as opposed to having to build many pieces before being able to test any of them.
+UML
+
+The Unified Modeling Language (UML) is a collection of kinds of diagrams that we can use to describe the design of a software system. Different diagrams address different parts of our design. We spent a fair amount of time talking about one of these diagrams: UML Class Diagrams. The discussion slides on this topic show the various notations used in UML Class Diagrams.
+
+Use cases
+
+Another way to view a design is in terms of problems that the system will need to solve and scenarios in which the system will be used to solve them. Use cases are a way of describing the behavior of a system from the points of view of a set of actors. Actors are entities external to the system (e.g., human users, other automated systems). Use cases are described as a sequence of events, in which an actor interacts with the system in some way.
+
+Use cases are focused on goals: what is each actor trying to achieve and how can the system help them to achieve it? We define details like user interface only to the extent that we can describe a scenario; the use cases will eventually be used when we consider a more detailed view of our design (e.g., user interface design, module design).
+
+There are many arrangements of use cases. One such arrangement has use cases broken up into the following sections.
+
+Name. We give the use case a name (and a short identifier) that describes it.
+Requirements Addressed. What requirements are addressed by this use case?
+Goal. What are the actors going to try to achieve in the case described?
+Brief Description. What is going on in this use case?
+Actors. What actors are involved?
+Preconditions. What must be true before this use case can be executed?
+Triggers. What forces cause the use case to be executed? Is it a user wanting to do something? Is it something that happens at a repeating interval (e.g., once per hour)?
+Sequence of Events. A description of sequence of events that will lead to the goal being achieved.
+Postconditions. What will be true after the use case has been executed?
+An example use case, which we wrote in lecture, follows.
+
+Name: Adding a Student to the System
+Requirements Addressed: ST-2
+Goal: To add a new student when they arrive for their first interim counseling meeting.
+Brief Description: Students are not automatically entered into the system. So, when a student arrives for his or her first interim counseling meeting, CCO Counselors will need to gather identifying information from the student and enter it into the system, so that the student can subsequently be scheduled into courses.
+Actors: CCO Counselor, Student
+Preconditions: Student has not enrolled in classes at the university previously.
+Triggers: Student arrives for first-ever counseling appointment.
+Sequence of Events:
+Student arrives at CCO for meeting with CCO Counselor.
+Student provides student ID to CCO Counselor.
+CCO Counselor logs into system.
+CCO Counselor looks up student by ID and determines that student is new.
+CCO Counselor asks Student for identifying information (see requirement ST-1).
+CCO Counselor enters identifying information about Student into system.
+CCO Counselor saves changes.
+Postconditions: Student's information will be stored in system.
+Architectural styles
+
+As we start to attack larger-scale problems, it becomes more difficult to discover a methodology for arranging our modules and their interactions. Luckily, there are kinds of problems that recur, for which good architectural solutions have been designed and have proven useful. These solutions are called architectural styles. Architectural styles represent "success stories" from the work of previous designers; to understand and use them, when appropriate, is to avoid going through the process of trial-and-error that those previous designers endured in order to find their design.
+
+Some well-known architectural styles:
+
+Hierarchy, or Main program with subroutines, in which the set of modules and their relationships (i.e., who calls who) form a hierarchy. This is a useful style to use when writing a single program, though a lot of interesting software is built out of a collection of programs.
+Abstract data type. An abstract data type (ADT) is a set of data and a set of operations for safely manipulating that data. ADTs, in a sense, allow us to extend our programming language, by implementing concepts that are not built into the language (as int or boolean types might be), then having them available to us throughout our system.
+Examples include a DateTime class that represents a point in time, a TimeSpan class that represents a duration of time, and a Money class that represents currency.
+Implicit invocation. Modules communicate with other modules by sending "signals," but the sending modules are not aware of who the receivers are. There is sometimes what we call a "bus" that is used to carry the signals from one module to another. This is a style that can lead to a very flexible design, because we can mix and match components more easily.
+This is the way that GUIs work in Java; the components, such as buttons, react when clicked by calling a method on a set of "listeners," who are objects interested in knowing when the button is clicked. The button's implementation does not depend on who the listeners are, but onl the mechanism for how to notify them.
+Client-server. Connections between modules are remote procedure calls, meaning that they are done across a network (hence the word "remote") but otherwise are a lot like procedure calls (i.e., parameters are passed, a result is returned). There is an explicit distinction between a server (a module that provides a service) and a client (a consumer of that service).
+Web browsers interact with web servers this way. Browsers send a particularly-formatted request and servers send back particularly-formatted responses.
+Repository or Blackboard. A central repository, or database, holds data. Modules "surround" the repository and share its data. As changes are made by one module, they are published to the repository; those changes can then be picked up (or "pushed" to) other modules.
+This style is extremely common in lots of "real" systems, where databases are extremely common. (Examples include web sites with dynamic content, "enterprise" systems, and source control systems.)
+Peer-to-peer. An increasingly common approach to solving certain kinds of problems is for modules to interact (generally across a network), but for none of them to be anointed as "clients" or "servers." Instead, all are peers, meaning that they have equal rights and responsibilities. The peers exchange information in a systematic fashion, collaborating on trying to solve some kind of problem.
+BitTorrent, which is a peer-to-peer protocol for sharing files amongst many people (by splitting the file into many smaller chunks and having the peers "trade" for chunks that they don't already have), is a great example of this.
+Pipes and filters. A series of independent, sequential transformations are made to data. The output of one module is the input to the next module. The modules have little or no state of their own; they simply know how to take what's given to them and affect some kind of change on it. In this approach, we call the modules filters and the connections between those modules pipes.
+This approach can lead to very flexible architectures, in which the output of the system is radically changed simply by rearranging the filters (e.g., adding one, removing one, or changing their order).
+Layered. Modules are arranged into layers. Modules in one layer only use modules in the layer directly below them. You could say that each layer hides the details of how the layers below it work. Layers are a good way of preventing particular complexities from pervading very far into a system; a detail is handled in one layer, hidden away in that layer so that no other layers need to know about it.
+Networks are almost always implemented this way. There are different arrangements of layers that are used in practiced, but layered architectures are ubiquitous.
+It is not necessarily the case that there is one architectural style for a whole project. We often combine them together.

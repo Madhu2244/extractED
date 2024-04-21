@@ -10,19 +10,38 @@ from generation.quiz_generation import generate_quiz
 from generation.tagging import get_subject_tag, get_notes_title
 import os
 import json
+from test_agent import simulate_handle_generate_quiz
+from test_agent import *
+# from grader_agent import GraderAgent, QuizParams
 
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)
+
+
+grader = GraderAgent(name="TestGraderAgent", seed="test_grader_agent_seed")
 
 @app.route('/submit', methods=['POST'])
 def submit_quiz():
     if request.is_json:
         data = request.get_json()  # Get JSON data
         data = dict(data)
-        print(data['quiz']['quiz'])
-        print(data['quiz']['summaries'])
-        return jsonify({'message': 'You did amazing!'}), 200
+        #print(data)
+        #print("Received notes data:", (data['quiz']['notes']))
+    
+        quiz_items = (data['quiz']['quiz'])
+
+        # Extract answers, selected responses (assuming the first option as selected), and questions
+        notes = (data['quiz']['notes'])
+        answers = [item['correct answer'] for item in quiz_items]
+        responses = [item['options'][0] for item in quiz_items]  # Simplified assumption for demonstration
+        questions = [item['question'] for item in quiz_items]
+
+        # quiz_params = QuizParams(answers=answers, responses=responses, questions = questions, notes = notes)
+        # graded_results = grader.grade_quiz(quiz_params)
+        # print(graded_results)
+        asyncio.run(simulate_handle_generate_quiz(answers, responses, questions, notes))
+        return jsonify({'message': 'Quiz data processed successfully!'}), 200
     return jsonify({'error': 'Request must be JSON'}), 400
 
 # Route to handle file upload and processing
