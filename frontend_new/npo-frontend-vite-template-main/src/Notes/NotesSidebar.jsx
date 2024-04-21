@@ -21,9 +21,9 @@ function NotesSidebar({ setStep }) {
         {/* Content section */}
         <Image src={placeholderImage} alt="Placeholder image" />
 
-        <div style={{ padding: '8px' }}>
+        <div>
           <Tag variant="solid" colorScheme="purple" my="4">
-            <Flex align="center">
+            <Flex align="center" style={{ marginRight: '40px' }}>
               Subject Tag
               <Icon as={MdSettings} ml="2" />
             </Flex>
@@ -42,15 +42,13 @@ function NotesSidebar({ setStep }) {
       {/* Footer section */}
       <Flex
         p="4"
-        borderTop="1px"
-        borderColor="gray.300"
-        justifyContent="space-between"
-        bg="gray.200" // Matching the background of the sidebar
+        direction="column"  // Changes flex direction to column for vertical stacking
+        bg="gray.200"  // Matching the background of the sidebar
       >
-        <Button onClick={() => setStep(1)} width="calc(50% - 2px)">
+        <Button onClick={() => setStep(1)} width="100%">
           Save Note
         </Button>
-        <Button onClick={() => setStep(2)} colorScheme="purple" width="calc(50% - 2px)">
+        <Button onClick={() => setStep(2)} colorScheme="purple" width="100%" mt="3">
           Generate Quiz
         </Button>
       </Flex>

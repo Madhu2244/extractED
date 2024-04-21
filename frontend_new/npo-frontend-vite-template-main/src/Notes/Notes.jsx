@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import React from 'react';
 import { Box } from '@chakra-ui/react';
 
 function Notes({ responseMessage }) {
@@ -10,10 +10,10 @@ function Notes({ responseMessage }) {
       <div>
         {Object.entries(responseMessage).map(([header, subtexts], index) => (
           <div key={index}>
-            <h2 fontSize="18px"><strong>{header}</strong></h2>
+            <h2 contentEditable={true} style={{ fontSize: '18px' }}><strong>{header}</strong></h2>
             <ul>
               {subtexts.map((subtext, subIndex) => (
-                <li fontSize="16px" key={subIndex}>{subtext}</li>
+                <li contentEditable={true} style={{ fontSize: '16px' }} key={subIndex}>{subtext}</li>
               ))}
             </ul>
             <br />
@@ -24,15 +24,15 @@ function Notes({ responseMessage }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#F8F8F8', minHeight: '100vh', paddingTop: '64px' }}> {/* Adjust padding top */}
+    <div style={{ backgroundColor: '#F8F8F8', minHeight: '100vh', paddingTop: '64px' }}>
       <Box
-        maxW="7in" // Standard US letter paper width
-        minH="11in" // Standard US letter paper height
-        m="auto" // Center the box on the page horizontally
-        p="16" // Increased internal padding to 16 from 8 for more inward effect
-        boxShadow="md" // Adds shadow for depth, like a paper
-        bg="white" // Background color of the paper
-        borderRadius="md" // Optional: if you want rounded corners
+        maxW="7in"
+        minH="11in"
+        m="auto"
+        p="16"
+        boxShadow="md"
+        bg="white"
+        borderRadius="md"
       >
         {outputNotes(responseMessage)}
       </Box>

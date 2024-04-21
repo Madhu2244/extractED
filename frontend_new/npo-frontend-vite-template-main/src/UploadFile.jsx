@@ -38,7 +38,7 @@ function UploadFile() {
     <div>
       <input type="file" accept=".pptx" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={loading}>
-        {loading ? 'Uploading...' : 'Upload File'}
+          {loading ? 'Uploading...' : 'Upload File'}
       </button>
       {loading && <p>Please wait, uploading...</p>}
       {responseMessage && <p>{responseMessage}</p>} {/* Display the response message */}

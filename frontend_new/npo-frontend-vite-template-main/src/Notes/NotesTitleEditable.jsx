@@ -5,7 +5,7 @@ function NotesTitleEditable() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px'}}>
       <FaPencil style={{ marginRight: '8px', color: 'purple' }} />
-      <Editable defaultValue={'Lesson Title: Auto Generated'}>
+      <Editable defaultValue={'Lesson Title'}>
         <EditablePreview />
         <EditableInput style={{ border: '1px solid #ccc', borderRadius: '4px' }} />
       </Editable>   

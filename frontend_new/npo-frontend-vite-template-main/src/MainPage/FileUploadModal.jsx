@@ -77,7 +77,7 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={onClose} >Cancel</Button>
+            <Button onClick={onClose} style={{ marginRight: '10px' }}>Cancel</Button>
             <Button colorScheme='purple' mr={3} onClick={handleUpload} disabled={loading}>
               {loading ? 'Uploading...' : 'Upload File'}
               <IoMdCloudUpload />
