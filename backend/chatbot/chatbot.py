@@ -10,7 +10,7 @@ from langchain.chains import ChatVectorDBChain
 from langchain.memory import ConversationBufferMemory
 
 # Set up OpenAI API key
-
+os.environ["OPENAI_API_KEY"] = "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"
 
 loader = TextLoader("/Users/tbanerjee12/extractED/backend/chatbot/output.txt")
 documents = loader.load()
