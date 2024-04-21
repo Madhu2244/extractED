@@ -199,11 +199,11 @@ function Quiz({ responseMessage, setStep }) {
         {topicsToReview && Object.keys(topicsToReview).length > 0 && (
           <Alert status='error'>
             <AlertIcon />
-            <AlertTitle>Make sure to review the following topics!</AlertTitle>
+            <AlertTitle>You missed questions from the following topics:</AlertTitle>
             <AlertDescription>
               <div>   
                 {Object.entries(topicsToReview).map(([topic, count]) => (
-                  <p key={topic}>{`${topic}: ${count} question(s) missed`}</p>
+                  <p key={topic}>{`${topic}`}</p>
                 ))}
               </div>
             </AlertDescription>
