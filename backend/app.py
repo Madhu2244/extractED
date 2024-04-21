@@ -12,7 +12,6 @@ import os
 import json
 from test_agent import simulate_handle_generate_quiz
 from test_agent import *
-# from grader_agent import GraderAgent, QuizParams
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -40,8 +39,8 @@ def submit_quiz():
         # quiz_params = QuizParams(answers=answers, responses=responses, questions = questions, notes = notes)
         # graded_results = grader.grade_quiz(quiz_params)
         # print(graded_results)
-        asyncio.run(simulate_handle_generate_quiz(answers, responses, questions, notes))
-        return jsonify({'message': 'Quiz data processed successfully!'}), 200
+        message = asyncio.run(simulate_handle_generate_quiz(answers, responses, questions, notes))
+        return jsonify({'message': message, 'test': 'test'}), 200
     return jsonify({'error': 'Request must be JSON'}), 400
 
 # Route to handle file upload and processing

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ChakraProvider } from '@chakra-ui/react'
-import FileUploadModal from './MainPage/FileUploadModal';
 import NotesPage from './Notes/NotesPage';
 import Quiz from './Quiz/Quiz';
 import MainPage from './MainPage/MainPage';
@@ -24,6 +23,7 @@ function App() {
 
         {step == 1 && (
           <NotesPage 
+            setResponseMessage={setResponseMessage}
             responseMessage={responseMessage}
             setStep={setStep}
           />

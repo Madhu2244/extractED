@@ -30,6 +30,9 @@ async def simulate_handle_generate_quiz(answers, responses, questions,notes):
     message = ctx.send.call_args[0][1].message
     print(f"\nUAgent Message: {message}")
 
+    return message
+
+
 if __name__ == "__main__":
     # Example usage
     answers = ["A", "B", "C"]

@@ -91,7 +91,7 @@ async def handle_grade_quiz(ctx: Context, sender: str, req: QuizParams):
         if score == 100:
             message = "Congratulations! All your answers are correct!"
         else:
-            message = f"Your score: {score}%\nWrong responses: {wrong_responses}\nSections to Review: {review_sections} "
+            message = f"Sections to Review: {review_sections}"
         await ctx.send(
             sender,
             UAgentResponse(

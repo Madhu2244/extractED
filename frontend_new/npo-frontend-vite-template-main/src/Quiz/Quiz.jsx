@@ -1,10 +1,19 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Box, Text } from '@chakra-ui/react';
+import test from '../TestData/Test';
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react'
 
-function Quiz({ responseMessage }) {
+function Quiz({ responseMessage, setStep }) {
   // State to keep track of selected answers
   const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [topicsToReview, setTopicsToReview] = useState({})
+  const [showRightAnswers, setShowRightAnswers] = useState(false);
 
   // Handler for clicking an answer option
   const handleAnswerClick = (questionIndex, optionIndex) => {
@@ -13,6 +22,35 @@ function Quiz({ responseMessage }) {
       [questionIndex]: optionIndex
     });
   };
+
+
+  function parseAndCount(data) {
+    // Extract the list part from the string
+    const listStart = data.indexOf('(') + 1;
+    const listEnd = data.lastIndexOf(')');
+
+    const inputString = data.substring(listStart, listEnd);
+    // Remove the surrounding brackets
+    const trimmedString = inputString.slice(1, -1);
+
+    // More robust splitting by detecting the pattern ", " outside of quotes
+    const items = trimmedString.split(/,\s*(?=(?:(?:[^"']*["']){2})*[^"']*$)/);
+
+    // Clean up the items (remove any leading/trailing quotes)
+    const cleanedItems = items.map(item => item.replace(/^['"]|['"]$/g, ''));
+
+    // Count the occurrences of each item
+    const counts = {};
+    cleanedItems.forEach(item => {
+        if (counts[item]) {
+            counts[item]++;
+        } else {
+            counts[item] = 1;
+        }
+    });
+
+    return counts;
+  }
 
   const submitQuiz = async () => {
     // Prepare the payload by adding selected answers to the quiz questions
@@ -38,8 +76,11 @@ function Quiz({ responseMessage }) {
         body: JSON.stringify(payload), // Convert the JavaScript object to a JSON string
       });
   
-      const data = await response.json(); // Assuming the server sends back JSON
-      console.log(data);
+      let data = await response.json(); // Assuming the server sends back JSON
+      data = data['message'];
+      // console.log(data)
+      setShowRightAnswers(true)
+      setTopicsToReview(parseAndCount(data))
     } catch (error) {
       console.error('Error uploading quiz:', error);
     }
@@ -47,6 +88,9 @@ function Quiz({ responseMessage }) {
 
   // Render the quiz based on the responseMessage
   const outputQuiz = (responseMessage) => {
+    if (responseMessage === null || responseMessage === '') {
+      responseMessage = test
+    }
     const quizData = responseMessage['quiz'];
 
     return (
@@ -55,6 +99,11 @@ function Quiz({ responseMessage }) {
           <div key={index}>
             <h3>{quizItem.question}</h3>
             <ul>
+            {showRightAnswers && selectedAnswers[index] !== quizItem.options.findIndex(opt => opt === quizItem['correct answer']) && (
+              <div>
+                <h1 style={{ color: 'red' }}>Incorrect: the answer is: {quizItem['correct answer']}</h1>
+              </div>
+            )}
             {quizItem.options.map((option, optionIndex) => (
               <Box key={optionIndex} mt={2} display="flex" alignItems="center">
                   <Button
@@ -90,11 +139,35 @@ function Quiz({ responseMessage }) {
         bg="white"
         borderRadius="md"
       >
-        <h1>Quiz!</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Select the correct answer for each question</h1>
+        <br />
         {outputQuiz(responseMessage)}
-        <Button onClick={submitQuiz}>
-          Submit Quiz
-        </Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button onClick={submitQuiz}>
+            Submit Quiz
+          </Button>
+          <Button onClick={() => setStep(0)}>
+            Return to Main Screen
+          </Button>
+        </div>
+        < br />
+        < br />
+        
+
+        {topicsToReview && Object.keys(topicsToReview).length > 0 && (
+          <Alert status='error'>
+            <AlertIcon />
+            <AlertTitle>Make sure to review the following topics!</AlertTitle>
+            <AlertDescription>
+              <div>   
+                {Object.entries(topicsToReview).map(([topic, count]) => (
+                  <p key={topic}>{`${topic}: ${count} question(s) missed`}</p>
+                ))}
+              </div>
+            </AlertDescription>
+          </Alert>
+          
+        )}
       </Box>
     </div>
   );

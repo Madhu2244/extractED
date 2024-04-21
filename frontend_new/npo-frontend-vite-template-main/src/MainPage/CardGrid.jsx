@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
-import { Flex, Link, Box, Card, CardHeader, CardBody, CardFooter, Heading, Button, SimpleGrid, Text } from '@chakra-ui/react'
+import { Flex, Link, Box, Button, SimpleGrid, Text } from '@chakra-ui/react'
 
-const CardGrid = () => {
+const CardGrid = ({ setStep }) => {
     
     const CardComponent = (title) => {
         return (
@@ -19,10 +18,10 @@ const CardGrid = () => {
                     </Text>
                 </Box>
                 <Flex justifyContent="space-between" alignItems="center" p={5} bg="white">
-                    <Link href="#" fontWeight="bold">
-                    Review Notes
+                    <Link href="#" fontWeight="bold" onClick={() => setStep(1)}>
+                        Review Notes
                     </Link>
-                    <Button colorScheme="purple">Take Quiz</Button>
+                    <Button colorScheme="purple" onClick={() => setStep(2)}>Take Quiz</Button>
                 </Flex>
             </Box>
         )

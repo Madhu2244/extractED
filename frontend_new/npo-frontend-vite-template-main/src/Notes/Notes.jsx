@@ -1,14 +1,20 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
 import { Box } from '@chakra-ui/react';
+import test from '../TestData/Test';
 
 function Notes({ responseMessage }) {
 
   const outputNotes = (responseMessage) => {
-    responseMessage = responseMessage['headers'];
+    if (responseMessage === null || responseMessage === '') {
+      responseMessage = test
+    }
+    const headers = responseMessage['headers'];
 
     return (
       <div>
-        {Object.entries(responseMessage).map(([header, subtexts], index) => (
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>{responseMessage['notes_title']}</h1>
+        <br />
+        {Object.entries(headers).map(([header, subtexts], index) => (
           <div key={index}>
             <h2 contentEditable={true} style={{ fontSize: '18px' }}><strong>{header}</strong></h2>
             <ul>
@@ -26,6 +32,7 @@ function Notes({ responseMessage }) {
   return (
     <div style={{ backgroundColor: '#F8F8F8', minHeight: '100vh', paddingTop: '64px' }}>
       <Box
+        id="notes-content"
         maxW="7in"
         minH="11in"
         m="auto"

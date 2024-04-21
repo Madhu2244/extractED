@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
 import FileUploadModal from './FileUploadModal';
 import CardGrid from './CardGrid';
 import { Stack, Avatar, Wrap, WrapItem } from '@chakra-ui/react';
@@ -28,7 +27,9 @@ const MainPage = ({ setResponseMessage, setStep }) => {
           setStep={setStep}
         />
         <div>
-          <CardGrid />
+          <CardGrid 
+            setStep={setStep}
+          />
         </div>
       </Stack>
 
