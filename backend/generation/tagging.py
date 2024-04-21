@@ -16,8 +16,6 @@ def get_subject_tag(headers, summaries, sentences, notes):
         
     return subject_tag.text
 
-from summarization.header_generation import get_gemini_model
-
 def get_notes_title(headers, summaries, sentences, notes):
     gemini_model = get_gemini_model()
 
