@@ -14,6 +14,10 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/submit', methods=['POST'])
+def submit_quiz():
+    return jsonify({'job': 'you did amazing!'}), 200
+
 # Route to handle file upload and processing
 @app.route('/upload', methods=['POST'])
 def upload_file():

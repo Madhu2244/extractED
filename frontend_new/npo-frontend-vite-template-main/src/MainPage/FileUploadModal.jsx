@@ -9,7 +9,9 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Button
+  Button,
+  Input,
+  Flex,
 } from '@chakra-ui/react';
 import { IoMdCloudUpload } from "react-icons/io";
 
@@ -19,6 +21,9 @@ function FileUploadModal({ setResponseMessage, setStep }) {
   // Upload state management from UploadFile component
   const [file, setFile] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const [value, setValue] = React.useState('')
+
+  const handleChange = (event) => setValue(event.target.value)
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -36,8 +41,8 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           method: 'POST',
           body: formData,
         });
-        const data = await response.text();
-        setResponseMessage('Upload successful: ' + JSON.stringify(data, null, 2));
+        const data = await response.json();
+        setResponseMessage(data); // Update response message
         console.log('Response:', data); // Log the server response
       } catch (error) {
         console.error('Error uploading file:', error);
@@ -54,8 +59,12 @@ function FileUploadModal({ setResponseMessage, setStep }) {
 
   return (
     <>
-      <Button colorScheme='purple' mr={3} onClick={onOpen}>Import Lecture Slides</Button>
-
+      <Flex justifyContent="center" width="100%">
+        <Flex width="70%" justifyContent="space-between">
+          <Button colorScheme='purple' width="25%" mr={4} onClick={onOpen}>Import Slides</Button>
+          <Input value={value} onChange={handleChange} placeholder='Search for your notes' size='md' width="75%" />
+        </Flex>
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -68,7 +77,7 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant='ghost'>Secondary Action</Button>
+            <Button onClick={onClose} >Cancel</Button>
             <Button colorScheme='purple' mr={3} onClick={handleUpload} disabled={loading}>
               {loading ? 'Uploading...' : 'Upload File'}
               <IoMdCloudUpload />

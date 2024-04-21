@@ -1,0 +1,8 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
+
+/* Apply Poppins font to body and set base font size */
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}

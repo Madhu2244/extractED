@@ -3,6 +3,9 @@ import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react'
 import FileUploadModal from './MainPage/FileUploadModal';
 import NotesPage from './Notes/NotesPage';
+import Quiz from './Quiz/Quiz';
+import MainPage from './MainPage/MainPage';
+import './App.css';
 
 function App() {
 
@@ -13,7 +16,7 @@ function App() {
     <>
       <ChakraProvider>
         {step == 0 && (
-          <FileUploadModal 
+          <MainPage 
             setResponseMessage={setResponseMessage}
             setStep={setStep}
           />
@@ -22,11 +25,17 @@ function App() {
         {step == 1 && (
           <NotesPage 
             responseMessage={responseMessage}
+            setStep={setStep}
           />
         )}
-        
-        
-        {/* <GeneratedNotes/> */}
+
+        {step == 2 && (
+          <Quiz
+            responseMessage={responseMessage}
+            setStep={setStep}
+          />
+        )}
+
       </ChakraProvider>
     </>
   );
