@@ -1,4 +1,3 @@
-import React from 'react';
 import { Editable, EditableInput, EditablePreview } from '@chakra-ui/react';
 import { FaPencil } from 'react-icons/fa6';
 

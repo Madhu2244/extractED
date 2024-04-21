@@ -16,16 +16,15 @@ import placeholderImage from './placeholder-article.png';
 import NotesTitleEditable from './NotesTitleEditable';
 import { MdSettings } from "react-icons/md"; // Changed from MdEdit to MdSettings
 
-function GeneratedNotes() {
+function NotesSidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     return (
         <>
             <Button onClick={onOpen}>Open</Button>
-            <Drawer isOpen={isOpen} onClose={onClose}>
+            <Drawer variant="permanent">
                 <DrawerOverlay />
                 <DrawerContent>
-                    <DrawerCloseButton />
                     <DrawerHeader>Notes Menu</DrawerHeader>
                     <DrawerBody>
                         <Image src={placeholderImage}></Image>
@@ -59,4 +58,4 @@ function GeneratedNotes() {
     );
 }
 
-export default GeneratedNotes;
+export default NotesSidebar;

@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { ChakraProvider } from '@chakra-ui/react'
-import GeneratedNotes from './GeneratedNotes';
-import FileUploadModal from './FileUploadModal';
-import NotesPage from './NotesPage';
+import FileUploadModal from './MainPage/FileUploadModal';
+import NotesPage from './Notes/NotesPage';
 
 function App() {
 
@@ -21,7 +20,9 @@ function App() {
         )}
 
         {step == 1 && (
-          <NotesPage />
+          <NotesPage 
+            responseMessage={responseMessage}
+          />
         )}
         
         
