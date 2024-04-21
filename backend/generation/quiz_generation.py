@@ -1,11 +1,16 @@
 from summarization.header_generation import get_gemini_model
 import json
-import re
 
 def generate_quiz(headers, notes, questions_per_topic):
     gemini_model = get_gemini_model()
 
     quiz_questions = []
+
+    base_prompt = (
+        "Based on the following notes, create a multiple-choice question with one correct answer and "
+        "three plausible distractors. The options should be paraphrased concepts related to the notes, not direct quotes. "
+        "Ensure the question is clear, concise, and specific to the topic. Format the question in JSON."
+    )
 
     json_template = {
         "question": "Replace this with the actual question",
@@ -15,11 +20,10 @@ def generate_quiz(headers, notes, questions_per_topic):
 
     for header in headers:
         note = notes.get(header, "")
-        for _ in range(questions_per_topic):
+        for i in range(questions_per_topic):
             prompt = (
-                f"Create a multiple choice question with 4 options about the topic '{header}': "
-                f"1 correct answer and 3 wrong answers based on: {note}. "
-                f"Use this format: {json.dumps(json_template)}"
+                f"{base_prompt} \n\nTopic: '{header}'.\n\nNotes: {note}\n\n"
+                f"Please use this JSON format for question {i + 1}: {json.dumps(json_template)}"
             )
             response = gemini_model.generate_content(prompt)
             try:
