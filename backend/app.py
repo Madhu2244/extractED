@@ -10,11 +10,6 @@ from generation.quiz_generation import generate_quiz
 import os
 import json
 
-
-
-# $env:API_KEY = 'AIzaSyDtdYPjd5cL3kE6daHpbbkgPS20OknKJDw'
-# $env:OPENAI_API_KEY = 'sk-proj-LiiAzRimBz0JJtdJhSDYT3BlbkFJTtUSkoOvsb7vEywW0yjj'
-
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)
