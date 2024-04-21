@@ -16,10 +16,12 @@ CORS(app)
 
 @app.route('/submit', methods=['POST'])
 def submit_quiz():
-    if 'quiz' in request.files:
-        quiz = request.files['quiz']
-        print(quiz)
-    return jsonify({'job': 'you did amazing!'}), 200
+    if request.is_json:
+        data = request.get_json()  # Get JSON data
+        data = list(data['quiz'])  # Print the data to see what is received
+        print(data[0]['correct answer'])
+        return jsonify({'message': 'You did amazing!'}), 200
+    return jsonify({'error': 'Request must be JSON'}), 400
 
 # Route to handle file upload and processing
 @app.route('/upload', methods=['POST'])

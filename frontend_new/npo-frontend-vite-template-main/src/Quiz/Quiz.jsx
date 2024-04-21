@@ -15,21 +15,29 @@ function Quiz({ responseMessage }) {
   };
 
   const submitQuiz = async () => {
-    responseMessage.quiz.forEach((question, index) => {
-      if (selectedAnswers[index] !== undefined) {
-        // Add the selected answer to the quiz question
-        question.selectedAnswer = question.options[selectedAnswers[index]];
-      }
-    });
-    console.log(responseMessage);
-    const formData = new FormData();
-    formData.append('quiz', responseMessage);
-
+    // Prepare the payload by adding selected answers to the quiz questions
+    const payload = {
+      quiz: responseMessage.quiz.map((question, index) => ({
+        ...question,
+        selectedAnswer: selectedAnswers[index] !== undefined
+          ? question.options[selectedAnswers[index]]
+          : null
+      }))
+    };
+  
+    console.log(payload); // Check what you are sending
+  
     try {
-      await fetch('http://127.0.0.1:5000/submit', {
+      const response = await fetch('http://127.0.0.1:5000/submit', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json', // Indicating that we are sending JSON
+        },
+        body: JSON.stringify(payload), // Convert the JavaScript object to a JSON string
       });
+  
+      const data = await response.json(); // Assuming the server sends back JSON
+      console.log(data);
     } catch (error) {
       console.error('Error uploading quiz:', error);
     }
