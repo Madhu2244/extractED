@@ -80,11 +80,7 @@ function FileUploadModal({ setResponseMessage, setStep }) {
           </ModalBody>
 
           <ModalFooter>
-<<<<<<< Updated upstream
             <Button onClick={onClose} style={{ marginRight: '10px' }}>Cancel</Button>
-=======
-            <Button onClick={onClose} marginRight="5px">Cancel</Button>
->>>>>>> Stashed changes
             <Button colorScheme='purple' mr={3} onClick={handleUpload} disabled={loading}>
   {loading ? 'Uploading...' : 'Upload File'}
   <span style={{ marginLeft: '5px' }}><IoMdCloudUpload /></span>

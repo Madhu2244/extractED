@@ -18,19 +18,12 @@ function NotesSidebar({ setStep }) {
         borderLeft="1px" /* Visual separation */
         borderColor="gray.300"
       >
-<<<<<<< Updated upstream
         {/* Content section */}
         <Image src={placeholderImage} alt="Placeholder image" />
 
         <div>
           <Tag variant="solid" colorScheme="purple" my="4">
             <Flex align="center" style={{ marginRight: '40px' }}>
-=======
-        <Box>
-          <Image src={placeholderImage} alt="Placeholder image"></Image>
-          <Tag variant="solid" colorScheme="purple" my="4" marginRight = "2">
-            <Flex align="center">
->>>>>>> Stashed changes
               Subject Tag
               <Icon as={MdSettings} ml="2" />
             </Flex>
