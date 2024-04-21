@@ -37,12 +37,12 @@ def upload_file():
             quiz_object = json.loads(quiz_pretty)
 
             return jsonify({
-                # 'message': 'File uploaded and processed',
-                # 'text': sentences,
-                # 'graph_data': graph,
+                'message': 'File uploaded and processed',
+                'text': sentences,
+                'graph_data': graph,
                 'headers': headers,
-                # 'summaries': summaries,
-                # 'notes': notes,
+                'summaries': summaries,
+                'notes': notes,
                 'quiz': quiz_object,
                 }), 200
 
