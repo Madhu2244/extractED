@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Box, Flex, Button, Image, Tag, Icon
+  Box, Flex, Button, Image, Tag, Icon, Spacer
 } from '@chakra-ui/react';
 import placeholderImage from './placeholder-article.png';
 import NotesTitleEditable from './NotesTitleEditable';
@@ -8,18 +8,20 @@ import { MdSettings } from "react-icons/md"; // Using MdSettings icon
 
 function NotesSidebar({ setStep }) {
   return (
-    <Flex height="100vh"> {/* Full viewport height and flexible display */}
+    <Flex height="100vh" direction="column"> {/* Changed to vertical layout */}
       <Box
-        w="250px" /* Fixed width */
+        w="275px" /* Fixed width */
         bg="gray.200" /* Background color */
         p="4" /* Padding */
-        height="100vh" /* Full viewport height */
+        flex="1" /* Takes up remaining space */
         overflowY="auto" /* Allows scrolling */
         borderLeft="1px" /* Visual separation */
         borderColor="gray.300"
       >
-        <Box>
-          <Image src={placeholderImage} alt="Placeholder image"></Image>
+        {/* Content section */}
+        <Image src={placeholderImage} alt="Placeholder image" />
+
+        <div style={{ padding: '8px' }}>
           <Tag variant="solid" colorScheme="purple" my="4">
             <Flex align="center">
               Subject Tag
@@ -32,17 +34,26 @@ function NotesSidebar({ setStep }) {
               <Icon as={MdSettings} ml="2" />
             </Flex>
           </Tag>
-          <NotesTitleEditable />
-        </Box>
-        <Flex justifyContent="space-between" mt="4">
-          <Button onClick={() => setStep(1)} width="calc(50% - 2px)">
-            Save Note
-          </Button>
-          <Button onClick={() => setStep(2)} colorScheme="purple" width="calc(50% - 2px)">
-            Generate Quiz
-          </Button>
-        </Flex>
+        </div>
+        <NotesTitleEditable />
+        <Spacer /> {/* Pushes footer down */}
       </Box>
+      
+      {/* Footer section */}
+      <Flex
+        p="4"
+        borderTop="1px"
+        borderColor="gray.300"
+        justifyContent="space-between"
+        bg="gray.200" // Matching the background of the sidebar
+      >
+        <Button onClick={() => setStep(1)} width="calc(50% - 2px)">
+          Save Note
+        </Button>
+        <Button onClick={() => setStep(2)} colorScheme="purple" width="calc(50% - 2px)">
+          Generate Quiz
+        </Button>
+      </Flex>
     </Flex>
   );
 }

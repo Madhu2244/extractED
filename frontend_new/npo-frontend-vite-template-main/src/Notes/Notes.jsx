@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
 import { Box } from '@chakra-ui/react';
 
 function Notes({ responseMessage }) {
@@ -11,12 +9,13 @@ function Notes({ responseMessage }) {
       <div>
         {Object.entries(responseMessage).map(([header, subtexts], index) => (
           <div key={index}>
-            <h2><strong>{header}</strong></h2>
+            <h2 fontSize="18px"><strong>{header}</strong></h2>
             <ul>
               {subtexts.map((subtext, subIndex) => (
-                <li key={subIndex}>{subtext}</li>
+                <li fontSize="16px" key={subIndex}>{subtext}</li>
               ))}
             </ul>
+            <br />
           </div>
         ))}
       </div>
@@ -26,15 +25,14 @@ function Notes({ responseMessage }) {
   return (
     <div style={{ backgroundColor: '#F8F8F8', minHeight: '100vh', paddingTop: '64px' }}> {/* Adjust padding top */}
       <Box
-        maxW="8.5in" // Standard US letter paper width
+        maxW="7in" // Standard US letter paper width
         minH="11in" // Standard US letter paper height
         m="auto" // Center the box on the page horizontally
-        p={8} // Internal padding
+        p="16" // Increased internal padding to 16 from 8 for more inward effect
         boxShadow="md" // Adds shadow for depth, like a paper
         bg="white" // Background color of the paper
         borderRadius="md" // Optional: if you want rounded corners
       >
-        <h1> Notes! </h1>
         {outputNotes(responseMessage)}
       </Box>
     </div>
